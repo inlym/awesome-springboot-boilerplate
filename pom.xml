@@ -43,9 +43,6 @@
         <!-- 第三方依赖版本号 -->
         <mybatis-flex.version>1.11.7</mybatis-flex.version>
         <flatten-maven-plugin.version>1.6.0</flatten-maven-plugin.version>
-        <hikari.version>5.1.0</hikari.version>
-        <guava.version>33.4.0-jre</guava.version>
-        <commons-text.version>1.15.0</commons-text.version>
         <logstash-logback-encoder.version>8.0</logstash-logback-encoder.version>
         <spring-ai.version>2.0.0</spring-ai.version>
 
@@ -148,8 +145,8 @@
         </dependency>
 
         <!-- MyBatis-Flex 持久层栈：starter 提供核心 ORM 能力，processor 是 APT 注解处理器 -->
-        <!-- boot4 starter 不再传递 JDBC，需显式声明 spring-boot-starter-jdbc -->
-        <!-- Spring Boot 已自带 HikariCP，但不显式引入会被 MyBatis-Flex 启动报错，详见 https://mybatis-flex.com/zh/faq.html#springboot-项目-启动报错-property-sqlsessionfactory-or-sqlsessiontemplate-are-required -->
+        <!-- boot4 starter 不传递 JDBC 和连接池依赖，需显式声明 spring-boot-starter-jdbc 和 HikariCP -->
+        <!-- Spring Boot 仅提供 HikariCP 的自动配置，不提供 jar 包，缺失时无 DataSource Bean 会导致 MyBatis-Flex 启动报错 -->
         <dependency>
             <groupId>com.mybatis-flex</groupId>
             <artifactId>mybatis-flex-spring-boot4-starter</artifactId>
@@ -180,12 +177,6 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <optional>true</optional>
-        </dependency>
-
-        <!-- Apache Commons Text：字符串处理工具库，支持模板替换、转义 -->
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-text</artifactId>
         </dependency>
     </dependencies>
 
@@ -228,13 +219,6 @@
                 <version>${mybatis-flex.version}</version>
             </dependency>
 
-            <!-- HikariCP -->
-            <dependency>
-                <groupId>com.zaxxer</groupId>
-                <artifactId>HikariCP</artifactId>
-                <version>${hikari.version}</version>
-            </dependency>
-
             <!-- Spring AI BOM -->
             <dependency>
                 <groupId>org.springframework.ai</groupId>
@@ -244,21 +228,7 @@
                 <scope>import</scope>
             </dependency>
 
-            <!-- Guava -->
-            <dependency>
-                <groupId>com.google.guava</groupId>
-                <artifactId>guava</artifactId>
-                <version>${guava.version}</version>
-            </dependency>
-
-            <!-- Apache Commons Text -->
-            <dependency>
-                <groupId>org.apache.commons</groupId>
-                <artifactId>commons-text</artifactId>
-                <version>${commons-text.version}</version>
-            </dependency>
-
-            <!-- Logstash Logback Encoder -->
+            <!-- Logstash Logback Encoder：JSON 结构化日志，供 logback-spring.xml 中 LoggingEventCompositeJsonEncoder 使用 -->
             <dependency>
                 <groupId>net.logstash.logback</groupId>
                 <artifactId>logstash-logback-encoder</artifactId>
