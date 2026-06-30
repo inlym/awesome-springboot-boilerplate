@@ -1,6 +1,5 @@
 package com.example.bootstrap;
 
-import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -9,13 +8,12 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  *
  * <h2>功能说明
  * <p>项目的主启动入口，负责初始化 Spring Boot 应用程序上下文，
- * 配置组件扫描和数据访问层映射。
+ * 配置组件扫描范围。
  *
  * @author <a href="https://www.inlym.com">inlym</a>
  * @since 1.0.0
  */
 @SpringBootApplication(scanBasePackages = {"com.example"})
-@MapperScan(basePackages = {"com.example.**.mapper"})
 public class Application {
 
     /**
@@ -26,7 +24,7 @@ public class Application {
      *
      * @param args 命令行参数
      */
-    public static void main(String[] args) {
+    static void main(String[] args) {
         SpringApplication.run(Application.class, args);
     }
 }
