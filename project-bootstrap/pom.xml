@@ -27,6 +27,10 @@
             <groupId>com.example</groupId>
             <artifactId>project-system</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.example</groupId>
+            <artifactId>project-account</artifactId>
+        </dependency>
 
         <!-- Logstash Logback Encoder for JSON structured logging -->
         <dependency>

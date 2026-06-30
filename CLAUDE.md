@@ -2,18 +2,16 @@
 
 ## 项目目标
 
-<在此描述本项目的业务目标和技术定位，例如：基于 Spring Boot 4.x 的 XX 业务后端服务>
+基于 Spring Boot 4.x 的多模块后端项目启动模板，封装通用的后端基础设施（异常处理、参数校验、日志、监控、鉴权、Redis、MyBatis-Flex、Spring AI 等），用于快速启动一个新的后端项目。
 
 **技术栈**: Spring Boot 4.x + Java 25 + MySQL + MyBatis-Flex + Redis + Maven
 
 **模块结构**:
 ```
 awesome-springboot-boilerplate/
-├── project-core/                   # 核心共享组件和配置
+├── project-core/                   # 核心共享组件和配置（异常、注解、工具类、配置类）
 ├── project-system/                 # 系统运行模块（与业务无关的运维能力）
-├── project-shared/                 # 跨模块共享数据模型（可选）
-├── project-integration/            # 外部系统集成聚合模块（可选）
-│   └── project-xxx/                # 具体集成子模块（可选）
+├── project-account/                # 账户模块（业务模块示例：用户、凭证、设置）
 └── project-bootstrap/              # 启动模块（主类、端口、profile）
 ```
 

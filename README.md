@@ -23,7 +23,8 @@ awesome-springboot-boilerplate/
 ├── .apifox-helper.properties        # Apifox Helper 插件配置
 ├── mybatis-flex.config              # MyBatis-Flex APT 配置
 ├── project-core/                    # 核心共享组件和配置（异常、注解、工具类、配置类）
-├── project-system/                  # 系统运行模块（运维相关：管理员鉴权、Redis 管理、系统信息、健康检查）
+├── project-system/                  # 系统运行模块（健康检查、应用与运行时信息、健康指标、请求回显）
+├── project-account/                 # 账户模块（业务模块示例：用户信息、认证凭证、用户设置）
 └── project-bootstrap/               # 启动模块（主类、配置文件、日志配置）
 ```
 
@@ -42,19 +43,27 @@ awesome-springboot-boilerplate/
 
 承载与系统运行相关的能力（不含业务逻辑）：
 
-- **actuator**：MySQL / Redis 健康检查、应用元数据、运行时信息、系统健康指标
-- **admin**：管理员令牌签发与鉴权（基于 Redis 的 token 存储）
-- **redis**：Redis 管理 API（键值查询、概览）
-- **runtime**：系统资源信息（内存、磁盘）
+- **actuator**
+    - `health`：MySQL / Redis 健康检查
+    - `info`：应用元数据（AppInfo）、运行时信息（内存、磁盘、JDK）、服务器 IP
+    - `metrics`：系统健康指标（ping 请求计数）
 - **echo**：请求回显（调试用）
+
+### project-account
+
+业务模块示例，演示如何在模板之上构建实际业务能力：
+
+- **user**：用户信息维护、账户注销（含状态枚举、专属异常）
+- **credential**：用户认证凭证（token）签发、查询、续期，基于 Redis 缓存 + DB 双写；配套 `UserTokenInterceptor` 完成请求级鉴权
+- **setting**：用户偏好设置（key-value 结构，未设置时使用系统默认值）
 
 ### project-bootstrap
 
 启动入口模块，包含：
 
-- `Application.java`：主启动类，扫描 `com.example` 包
+- `Application.java`：主启动类，扫描 `com.example` 包，`@MapperScan` 扫描 `com.example.**.mapper`
 - `application.yml`：通用配置
-- `application-{local,dev,prod}.yml`：环境配置（占位符凭证，需替换）
+- `application-local.yml`：本地环境配置（占位符凭证，需替换）
 - `logback-spring.xml`：结构化日志配置
 - `i18n/messages_{zh,en}.properties`：通用响应消息
 
@@ -125,24 +134,24 @@ mv project-core/src/main/java/com/example project-core/src/main/java/com/yourbra
 |-----------------------------------------------|---------------------------------------------------------------------|
 | `pom.xml`（根与子模块）                              | `<artifactId>project-*</artifactId>` 与 `<module>project-*</module>` |
 | 模块目录名                                         | `project-core/`、`project-system/`、`project-bootstrap/`              |
-| `bootstrap/pom.xml`                           | `<finalName>awesome-springboot-boilerplate</finalName>`                             |
+| `bootstrap/pom.xml`                           | `<finalName>awesome-springboot-boilerplate</finalName>`             |
 | `application.yml`                             | `management.metrics.tags.application`                               |
-| `application-{local,dev,prod}.yml`            | `spring.application.name`                                           |
+| `application-local.yml`                       | `spring.application.name`                                           |
 | `I18nProperties.java`                         | `@ConfigurationProperties(prefix = "project.i18n")`                 |
 | `application.yml` 中的 `project.openai.api-key` | 配置前缀                                                                |
 | `CustomHttpHeader.java`                       | `x-project-*` HTTP 头常量                                              |
 | `SystemHealthMetrics.java`                    | `project.system.health.ping.requests` 指标名                           |
 | `AppInfoContributor.java`                     | `APP_NAME` 与 `APP_DESCRIPTION`                                      |
-| `logback-spring.xml`                          | 默认日志路径 `/var/log/awesome-springboot-boilerplate`                                    |
+| `logback-spring.xml`                          | 默认日志路径 `/var/log/awesome-springboot-boilerplate`                    |
 | `CLAUDE.md`                                   | 模块结构图                                                               |
 
 ### 3. 业务标识（应用名、描述）
 
-| 位置                                   | 当前值                        | 替换建议   |
-|--------------------------------------|----------------------------|--------|
-| `AppInfoContributor.APP_NAME`        | `"Awesome Springboot Boilerplate"`         | 你的应用名  |
-| `AppInfoContributor.APP_DESCRIPTION` | `"Spring Boot 4.x 项目后端服务"` | 你的业务描述 |
-| `README.md`                          | 当前文件                       | 你的项目说明 |
+| 位置                                   | 当前值                                | 替换建议   |
+|--------------------------------------|------------------------------------|--------|
+| `AppInfoContributor.APP_NAME`        | `"Awesome Springboot Boilerplate"` | 你的应用名  |
+| `AppInfoContributor.APP_DESCRIPTION` | `"Spring Boot 4.x 项目后端服务"`         | 你的业务描述 |
+| `README.md`                          | 当前文件                               | 你的项目说明 |
 
 ### 4. Spring AI（可选）
 
@@ -155,10 +164,9 @@ mv project-core/src/main/java/com/example project-core/src/main/java/com/yourbra
 
 ### Profile 切换
 
-- `local`（默认）：本地开发
-
-切换方式：修改 `application.yml` 的 `spring.profiles.active`，或启动时通过 `--spring.profiles.active=<profile>` 指定。新增环境时在
-`project-bootstrap/src/main/resources/` 下创建对应的 `application-<profile>.yml`。
+模板当前仅提供 `local` profile（默认）。切换方式：修改 `application.yml` 的 `spring.profiles.active`，或启动时通过
+`--spring.profiles.active=<profile>` 指定。新增环境时在 `project-bootstrap/src/main/resources/` 下创建对应的
+`application-<profile>.yml`，并按需补充对应的凭证配置。
 
 ### 日志
 
