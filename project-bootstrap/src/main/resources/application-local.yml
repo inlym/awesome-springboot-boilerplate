@@ -1,0 +1,100 @@
+# 本地开发环境配置文件
+
+# 日志配置
+logging:
+    # 日志级别配置
+    level:
+        # 项目根包日志级别
+        com.example: TRACE
+        # 关闭 Netty macOS DNS 原生库加载告警，本地开发环境该告警无业务影响
+        io.netty.resolver.dns: OFF
+    # 日志文件存储目录，macOS 无 /var/log 写权限，改用项目本地目录
+    file:
+        path: ./logs
+
+# 服务器配置
+server:
+    # 服务端口
+    port: 35025
+
+# Spring 框架配置
+spring:
+    # 应用基本信息
+    application:
+        # 应用名称，用于服务注册和监控标识
+        name: "awesome-springboot-boilerplate-local"
+
+    # 数据源配置
+    datasource:
+        # 数据库连接 URL，连接本机 MySQL 9 实例的 project_server 库
+        # allowPublicKeyRetrieval=true：caching_sha2_password 插件在 useSSL=false 时需要从服务端取 RSA 公钥
+        url: jdbc:mysql://localhost:3306/project_server?useSSL=false&serverTimezone=UTC&characterEncoding=utf8&autoReconnect=true&connectTimeout=5000&socketTimeout=30000&allowPublicKeyRetrieval=true
+        # 数据库用户名，本地开发沿用 root 账号
+        username: "root"
+        # 数据库密码，root 已重置为空密码（本地开发环境）
+        password: ""
+        # HikariCP 连接池配置（高性能 JDBC 连接池）
+        hikari:
+            # 连接池名称，便于监控和问题排查时识别
+            pool-name: HikariPoolLocal
+            # 连接池最大连接数，建议 = CPU 核心数 * 2 + 磁盘数
+            maximum-pool-size: 20
+            # 连接池最小空闲连接数，建议 = maximum-pool-size / 2
+            minimum-idle: 10
+            # 获取连接的超时时间（毫秒），网络不稳定时适当增加
+            connection-timeout: 3000
+            # 连接最大存活时间（毫秒），必须小于 MySQL wait_timeout
+            max-lifetime: 1500000
+            # 连接保活时间（毫秒），定期验证空闲连接
+            keepalive-time: 120000
+            # 连接验证超时时间（毫秒）
+            validation-timeout: 3000
+            # 连接泄漏检测阈值（毫秒），超过此时间未归还连接将记录警告
+            leak-detection-threshold: 60000
+
+    # Spring Data 配置
+    data:
+        # Redis 缓存配置
+        redis:
+            # Redis 服务器地址，连接本机 Homebrew 启动的 Redis 实例
+            host: "localhost"
+            # Redis 数据库编号
+            database: 0
+            # Redis 服务端口
+            port: 6379
+            # Redis 用户名，本机 Redis 未启用 ACL，留空
+            username: ""
+            # Redis 访问密码，本机 Redis 未设置密码，留空
+            password: ""
+            # 连接超时时间（毫秒）
+            connect-timeout: 2000
+            # 命令执行超时时间（毫秒）
+            timeout: 20000
+
+# Spring Boot Actuator 监控端点配置
+management:
+    # 端点 Web 暴露配置
+    endpoints:
+        web:
+            exposure:
+                # 暴露的端点列表，"*" 表示全部暴露（本地开发环境便于调试）
+                include: "*"
+
+    # 单端点配置
+    endpoint:
+        health:
+            # 始终展示组件细节，包含各 HealthIndicator 的 status 与 detail 字段，便于本地调试
+            show-details: always
+
+    # 指标环境标签
+    metrics:
+        tags:
+            # 运行环境标识，便于在 Prometheus 中按环境聚合
+            env: "local"
+
+# 项目自定义配置
+project:
+    # 国际化配置
+    i18n:
+        # 语言类型（可选值：CHINESE、ENGLISH）
+        language: "CHINESE"

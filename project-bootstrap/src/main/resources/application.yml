@@ -1,0 +1,125 @@
+# 项目主配置文件
+# 包含所有环境通用的配置项，特定环境配置请参考对应的 profile 配置文件
+
+# Spring 框架配置
+spring:
+    # Spring 环境配置
+    profiles:
+        # 激活的配置文件，默认为本地开发环境
+        active: local
+
+    # 主应用配置
+    main:
+        # 关闭 Spring Boot 启动 banner，减少控制台输出
+        banner-mode: off
+
+    # 输出配置
+    output:
+        # ANSI 彩色输出配置，提升开发体验
+        ansi:
+            # 始终启用彩色输出，便于日志查看和调试
+            enabled: ALWAYS
+
+    # 生命周期配置
+    lifecycle:
+        # 每个关闭阶段的超时时间（秒）
+        timeout-per-shutdown-phase: 60s
+
+    # 线程配置
+    threads:
+        # 虚拟线程配置
+        virtual:
+            # 启用虚拟线程（Java 25+）
+            enabled: true
+
+    # Reactor 上下文传播配置
+    reactor:
+        # 启用自动上下文传播，使 Schedulers 创建的线程自动传递 MDC、Observation、Span
+        # 可选值：AUTO、LIMITED；AUTO 由 Spring Boot 在 ReactorAutoConfiguration 构造函数中调用 Hooks.enableAutomaticContextPropagation
+        context-propagation: AUTO
+
+    # 自动配置排除项
+    autoconfigure:
+        # 需要排除的自动配置类列表
+        exclude:
+            # 排除 Spring Security 默认用户详情服务自动配置，避免生成默认密码的警告
+            - org.springframework.boot.security.autoconfigure.UserDetailsServiceAutoConfiguration
+
+    # Spring Cache 缓存配置
+    cache:
+        # 缓存类型，使用 Redis 作为缓存实现
+        type: redis
+
+    # 国际化消息配置
+    messages:
+        # 默认编码
+        encoding: UTF-8
+        # 消息缓存时间（秒），生产环境可以提高性能
+        cache-duration: 3600
+        # 找不到消息时是否回退到系统区域设置
+        fallback-to-system-locale: false
+
+    # Spring AI 配置（使用前请替换为你的实际 API 密钥）
+    ai:
+        # OpenAI 配置
+        openai:
+            # OpenAI API 密钥
+            api-key: ${project.openai.api-key}
+
+# 服务器配置
+server:
+    # 优雅关闭配置
+    shutdown: graceful
+
+# 异步任务配置
+async:
+    # 异步任务线程池配置
+    config:
+        # 核心线程数 - 1 核服务器保持精简
+        core-pool-size: 5
+        # 最大线程数 - 作为安全上限，防止资源耗尽
+        max-pool-size: 20
+        # 队列容量 - 适中容量，能在突发时触发线程扩展
+        queue-capacity: 100
+        # 线程存活时间（秒）- 避免频繁创建销毁线程
+        keep-alive-seconds: 120
+        # 线程名称前缀
+        thread-name-prefix: "async-thread-"
+
+# 定时任务配置
+schedule:
+    # 定时任务线程池配置
+    config:
+        # 线程池大小 - 适用于定时任务的数量
+        pool-size: 5
+        # 线程名称前缀 - 便于日志监控和问题排查
+        thread-name-prefix: "schedule-task-"
+        # 关闭时等待任务完成的时间（秒）- 确保任务正常完成
+        await-termination-seconds: 30
+
+# 项目自定义配置
+project:
+    # OpenAI 集成配置
+    openai:
+        # OpenAI API 密钥（请替换为你的实际密钥）
+        api-key: "your-openai-api-key"
+
+# Spring Boot Actuator 监控配置
+management:
+    # 指标通用标签，所有 Micrometer 指标都会自动携带，便于在 Prometheus 中按维度聚合
+    metrics:
+        tags:
+            # 应用名标识，多服务场景下区分指标来源
+            application: "awesome-springboot-boilerplate"
+
+    # Info 端点贡献者配置
+    info:
+        # 暴露环境变量中以 info.* 开头的属性
+        env:
+            enabled: true
+        # 暴露 JDK 运行时信息
+        java:
+            enabled: true
+        # 暴露操作系统信息
+        os:
+            enabled: true
