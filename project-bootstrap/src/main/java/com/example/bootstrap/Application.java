@@ -7,8 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * 应用程序启动类
  *
  * <h2>功能说明
- * <p>项目的主启动入口，负责初始化 Spring Boot 应用程序上下文，
- * 配置组件扫描范围。
+ * <p>项目的主启动入口，负责初始化 Spring Boot 应用程序上下文，配置组件扫描范围。
  *
  * @author <a href="https://www.inlym.com">inlym</a>
  * @since 1.0.0
