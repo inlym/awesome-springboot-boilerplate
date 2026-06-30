@@ -41,10 +41,12 @@ public class ContextPropagationConfig {
     public ContextPropagationConfig(ObservationRegistry observationRegistry) {
         ContextRegistry registry = ContextRegistry.getInstance();
 
-        // MDC accessor，无参构造内部创建 GlobalMdcThreadLocalAccessor，传播 SLF4J MDC 全量键值
+        // MDC accessor，Slf4jThreadLocalAccessor 不由 ServiceLoader 自动注册，需手动添加
+        // 无参构造内部使用 GlobalMdcThreadLocalAccessor，传播 SLF4J MDC 全量键值
         registry.registerThreadLocalAccessor(new Slf4jThreadLocalAccessor());
 
-        // Observation accessor，承载 Observation 跨线程恢复
+        // Observation accessor，注入 Spring 管理的 ObservationRegistry
+        // 覆盖 ServiceLoader 自动注册的版本（自动版用空 ObservationRegistry，传播不生效）
         registry.registerThreadLocalAccessor(new ObservationThreadLocalAccessor(observationRegistry));
     }
 }

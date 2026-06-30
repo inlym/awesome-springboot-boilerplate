@@ -32,6 +32,22 @@ spring:
             # 启用虚拟线程（Java 25+）
             enabled: true
 
+    # 任务执行与调度配置
+    task:
+        execution:
+            # 启用上下文传播，自动注册 ContextPropagatingTaskDecorator，将 MDC、Observation、Span 等传播到异步任务线程
+            propagate-context: true
+            # 异步虚拟线程名前缀，便于在线程 dump 和日志中识别 @Async 创建的虚拟线程
+            thread-name-prefix: "async-"
+        # 任务调度配置，使用虚拟线程版 SimpleAsyncTaskScheduler（并发无限制，每个定时任务独立虚拟线程）
+        scheduling:
+            # 关闭配置
+            shutdown:
+                # 关闭时等待正在执行的定时任务完成，避免任务被强制中断
+                await-termination: true
+                # 等待时间，超时后强制关闭
+                await-termination-period: 30s
+
     # Reactor 上下文传播配置
     reactor:
         # 启用自动上下文传播，使 Schedulers 创建的线程自动传递 MDC、Observation、Span
@@ -59,50 +75,17 @@ spring:
         # 找不到消息时是否回退到系统区域设置
         fallback-to-system-locale: false
 
-    # Spring AI 配置（使用前请替换为你的实际 API 密钥）
+    # Spring AI 配置
     ai:
         # OpenAI 配置
         openai:
-            # OpenAI API 密钥
-            api-key: ${project.openai.api-key}
+            # OpenAI API 密钥（请替换为你的实际密钥）
+            api-key: "your-openai-api-key"
 
 # 服务器配置
 server:
     # 优雅关闭配置
     shutdown: graceful
-
-# 异步任务配置
-async:
-    # 异步任务线程池配置
-    config:
-        # 核心线程数 - 1 核服务器保持精简
-        core-pool-size: 5
-        # 最大线程数 - 作为安全上限，防止资源耗尽
-        max-pool-size: 20
-        # 队列容量 - 适中容量，能在突发时触发线程扩展
-        queue-capacity: 100
-        # 线程存活时间（秒）- 避免频繁创建销毁线程
-        keep-alive-seconds: 120
-        # 线程名称前缀
-        thread-name-prefix: "async-thread-"
-
-# 定时任务配置
-schedule:
-    # 定时任务线程池配置
-    config:
-        # 线程池大小 - 适用于定时任务的数量
-        pool-size: 5
-        # 线程名称前缀 - 便于日志监控和问题排查
-        thread-name-prefix: "schedule-task-"
-        # 关闭时等待任务完成的时间（秒）- 确保任务正常完成
-        await-termination-seconds: 30
-
-# 项目自定义配置
-project:
-    # OpenAI 集成配置
-    openai:
-        # OpenAI API 密钥（请替换为你的实际密钥）
-        api-key: "your-openai-api-key"
 
 # Spring Boot Actuator 监控配置
 management:
@@ -110,7 +93,7 @@ management:
     metrics:
         tags:
             # 应用名标识，多服务场景下区分指标来源
-            application: "awesome-springboot-boilerplate"
+            application: ${spring.application.name}
 
     # Info 端点贡献者配置
     info:
