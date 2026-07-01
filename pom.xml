@@ -17,6 +17,7 @@
         <module>project-core</module>
         <module>project-system</module>
         <module>project-account</module>
+        <module>project-demo</module>
         <module>project-bootstrap</module>
     </modules>
 
@@ -191,6 +192,11 @@
             <dependency>
                 <groupId>com.example</groupId>
                 <artifactId>project-account</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.example</groupId>
+                <artifactId>project-demo</artifactId>
                 <version>${revision}</version>
             </dependency>
             <dependency>
