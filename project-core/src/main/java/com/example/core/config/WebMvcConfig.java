@@ -3,6 +3,7 @@ package com.example.core.config;
 import com.example.core.annotation.resolver.ClientIpMethodArgumentResolver;
 import com.example.core.annotation.resolver.UserIdMethodArgumentResolver;
 import com.example.core.extension.InterceptorCustomizer;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
@@ -45,7 +46,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
      * @param registry CORS 注册器
      */
     @Override
-    public void addCorsMappings(CorsRegistry registry) {
+    public void addCorsMappings(@NonNull CorsRegistry registry) {
         registry
             .addMapping("/**")
             .allowedOrigins("*")
@@ -64,7 +65,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
      * @param argumentResolvers 参数解析器列表
      */
     @Override
-    public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
+    public void addArgumentResolvers(@NonNull List<HandlerMethodArgumentResolver> argumentResolvers) {
         argumentResolvers.add(new UserIdMethodArgumentResolver());
         argumentResolvers.add(new ClientIpMethodArgumentResolver());
     }
@@ -78,7 +79,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
      * @param registry 拦截器注册表
      */
     @Override
-    public void addInterceptors(InterceptorRegistry registry) {
+    public void addInterceptors(@NonNull InterceptorRegistry registry) {
         interceptorCustomizers.forEach(customizer -> customizer.addInterceptors(registry));
     }
 }

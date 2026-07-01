@@ -1,6 +1,7 @@
 package com.example.core.config;
 
 import com.example.core.extension.WebSocketCustomizer;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
@@ -42,7 +43,7 @@ public class WebSocketConfig implements WebSocketConfigurer {
      * @param registry WebSocket 处理器注册表
      */
     @Override
-    public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
+    public void registerWebSocketHandlers(@NonNull WebSocketHandlerRegistry registry) {
         customizers.forEach(customizer -> customizer.customize(registry));
     }
 }
