@@ -3,6 +3,11 @@
 
 # Spring 框架配置
 spring:
+    # 应用基本信息
+    application:
+        # 应用名称，用于服务注册和监控标识
+        name: "awesome-springboot-boilerplate"
+
     # Spring 环境配置
     profiles:
         # 激活的配置文件，默认为本地开发环境
@@ -12,13 +17,6 @@ spring:
     main:
         # 关闭 Spring Boot 启动 banner，减少控制台输出
         banner-mode: off
-
-    # 输出配置
-    output:
-        # ANSI 彩色输出配置，提升开发体验
-        ansi:
-            # 始终启用彩色输出，便于日志查看和调试
-            enabled: ALWAYS
 
     # 生命周期配置
     lifecycle:
@@ -39,6 +37,12 @@ spring:
             propagate-context: true
             # 异步虚拟线程名前缀，便于在线程 dump 和日志中识别 @Async 创建的虚拟线程
             thread-name-prefix: "async-"
+            # 关闭配置
+            shutdown:
+                # 关闭时等待正在执行的异步任务完成，避免任务被强制中断
+                await-termination: true
+                # 等待时间，超时后强制关闭
+                await-termination-period: 30s
         # 任务调度配置，使用虚拟线程版 SimpleAsyncTaskScheduler（并发无限制，每个定时任务独立虚拟线程）
         scheduling:
             # 关闭配置
@@ -47,12 +51,6 @@ spring:
                 await-termination: true
                 # 等待时间，超时后强制关闭
                 await-termination-period: 30s
-
-    # Reactor 上下文传播配置
-    reactor:
-        # 启用自动上下文传播，使 Schedulers 创建的线程自动传递 MDC、Observation、Span
-        # 可选值：AUTO、LIMITED；AUTO 由 Spring Boot 在 ReactorAutoConfiguration 构造函数中调用 Hooks.enableAutomaticContextPropagation
-        context-propagation: AUTO
 
     # 自动配置排除项
     autoconfigure:
@@ -66,20 +64,29 @@ spring:
         # 缓存类型，使用 Redis 作为缓存实现
         type: redis
 
-    # Spring AI 配置
-    ai:
-        # OpenAI 配置
-        openai:
-            # OpenAI API 密钥（请替换为你的实际密钥）
-            api-key: "your-openai-api-key"
-
 # 服务器配置
 server:
+    # 服务端口
+    port: 35025
+
     # 优雅关闭配置
     shutdown: graceful
 
 # Spring Boot Actuator 监控配置
 management:
+    # 端点 Web 暴露配置
+    endpoints:
+        web:
+            exposure:
+                # 暴露的端点列表，仅暴露无敏感信息的端点；本地环境可在 profile 中覆盖为 "*"
+                include: "health,info"
+
+    # 单端点配置
+    endpoint:
+        health:
+            # 展示组件细节的时机（可选值：never、always、when-authorized）；本地环境可在 profile 中覆盖为 always
+            show-details: when-authorized
+
     # 指标通用标签，所有 Micrometer 指标都会自动携带，便于在 Prometheus 中按维度聚合
     metrics:
         tags:

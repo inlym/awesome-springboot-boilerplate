@@ -8,22 +8,13 @@ logging:
         com.example: TRACE
         # 关闭 Netty macOS DNS 原生库加载告警，本地开发环境该告警无业务影响
         io.netty.resolver.dns: OFF
+
     # 日志文件存储目录，macOS 无 /var/log 写权限，改用项目本地目录
     file:
         path: ./logs
 
-# 服务器配置
-server:
-    # 服务端口
-    port: 35025
-
 # Spring 框架配置
 spring:
-    # 应用基本信息
-    application:
-        # 应用名称，用于服务注册和监控标识
-        name: "awesome-springboot-boilerplate-local"
-
     # 数据源配置
     datasource:
         # 数据库连接 URL，连接本机 MySQL 实例的 project_server 库
@@ -32,22 +23,6 @@ spring:
         username: "root"
         # 数据库密码，root 已重置为空密码（本地开发环境）
         password: ""
-        # HikariCP 连接池配置（高性能 JDBC 连接池）
-        hikari:
-            # 连接池名称，便于监控和问题排查时识别
-            pool-name: HikariPoolLocal
-            # 连接池最大连接数，本地开发仅单用户串行请求，无需大量连接
-            maximum-pool-size: 5
-            # 连接池最小空闲连接数
-            minimum-idle: 2
-            # 连接最大存活时间（毫秒），必须小于 MySQL wait_timeout
-            max-lifetime: 1500000
-            # 连接保活时间（毫秒），定期验证空闲连接
-            keepalive-time: 120000
-            # 连接泄漏检测阈值（毫秒），超过此时间未归还连接将记录警告
-            leak-detection-threshold: 60000
-            # 连接测试查询，用于验证连接可用性
-            connection-test-query: SELECT 1
 
     # Spring Data 配置
     data:
@@ -64,6 +39,20 @@ spring:
             # 命令执行超时时间（毫秒）
             timeout: 20000
 
+    # 输出配置
+    output:
+        # ANSI 彩色输出配置
+        ansi:
+            # 始终启用彩色输出（可选值：ALWAYS、NEVER、DETECT），便于本地日志查看和调试
+            enabled: ALWAYS
+
+    # Spring AI 配置
+    ai:
+        # OpenAI 配置
+        openai:
+            # OpenAI API 密钥，通过环境变量注入；本地开发可在 IDE Run Configuration 或 .env 中设置
+            api-key: ${OPENAI_API_KEY:your-openai-api-key}
+
 # Spring Boot Actuator 监控端点配置
 management:
     # 端点 Web 暴露配置
@@ -76,7 +65,7 @@ management:
     # 单端点配置
     endpoint:
         health:
-            # 始终展示组件细节，包含各 HealthIndicator 的 status 与 detail 字段，便于本地调试
+            # 始终展示组件细节（可选值：never、always、when-authorized），包含各 HealthIndicator 的 status 与 detail 字段，便于本地调试
             show-details: always
 
     # 指标环境标签
