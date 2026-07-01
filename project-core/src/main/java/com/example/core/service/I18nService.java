@@ -14,7 +14,7 @@ import java.util.Locale;
  *
  * <h2>服务说明
  * <p>提供多语言消息获取功能，用于支持应用程序的国际化需求。
- * <p>通过 MessageSource 从资源文件中获取本地化消息，支持参数替换和自定义语言环境。
+ * <p>通过 MessageSource 从资源文件中获取本地化消息，语言环境由请求上下文（LocaleContextHolder）解析，对应客户端 Accept-Language。
  *
  * @author <a href="https://www.inlym.com">inlym</a>
  * @since 1.0.0
@@ -32,8 +32,11 @@ public class I18nService {
     /**
      * 获取国际化消息
      *
+     * <h3>异常行为
+     * <p>消息键不存在时抛出 NoSuchMessageException，由调用方保证键值有效。
+     *
      * @param key 消息键，对应资源文件中的键名
-     * @return 本地化消息内容，不存在则返回 null
+     * @return 本地化消息内容
      */
     public String getMessage(@NotBlank String key) {
         return doGetMessage(key, null, LocaleContextHolder.getLocale());
@@ -46,38 +49,15 @@ public class I18nService {
      * <p>资源文件中使用 {0}, {1}, {2}... 表示占位符，按参数数组索引替换。
      * <p>示例：welcome.message=Welcome {0}, your account balance is {1}
      *
+     * <h3>异常行为
+     * <p>消息键不存在时抛出 NoSuchMessageException，由调用方保证键值有效。
+     *
      * @param key  消息键，对应资源文件中的键名
      * @param args 参数数组，用于替换消息中的占位符
-     * @return 本地化消息内容，不存在则返回 null
+     * @return 本地化消息内容
      */
     public String getMessage(@NotBlank String key, Object[] args) {
         return doGetMessage(key, args, LocaleContextHolder.getLocale());
-    }
-
-    /**
-     * 获取指定语言环境的国际化消息
-     *
-     * @param key    消息键，对应资源文件中的键名
-     * @param locale 语言环境，如 Locale.US、Locale.CHINA
-     * @return 本地化消息内容，不存在则返回 null
-     */
-    public String getMessage(@NotBlank String key, Locale locale) {
-        return doGetMessage(key, null, locale);
-    }
-
-    /**
-     * 获取指定语言环境且带参数的国际化消息
-     *
-     * <h3>占位符格式
-     * <p>资源文件中使用 {0}, {1}, {2}... 表示占位符，按参数数组索引替换。
-     *
-     * @param key    消息键，对应资源文件中的键名
-     * @param args   参数数组，用于替换消息中的占位符
-     * @param locale 语言环境，如 Locale.US、Locale.CHINA
-     * @return 本地化消息内容，不存在则返回 null
-     */
-    public String getMessage(@NotBlank String key, Object[] args, Locale locale) {
-        return doGetMessage(key, args, locale);
     }
 
     // ================================ private 方法 ================================
