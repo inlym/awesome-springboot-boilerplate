@@ -1,30 +1,35 @@
 package com.example.core.config;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.web.servlet.LocaleResolver;
-import org.springframework.web.servlet.i18n.FixedLocaleResolver;
+import org.springframework.web.servlet.i18n.AcceptHeaderLocaleResolver;
+
+import java.util.List;
+import java.util.Locale;
 
 /**
  * 国际化配置类
  *
  * <h2>配置说明
- * <p>提供多语言支持配置，包括 MessageSource Bean 的定义和配置。
+ * <p>配置 LocaleResolver，根据客户端 Accept-Language 请求头解析语言。MessageSource 由 Spring Boot 自动配置，配置项见 spring.messages。
  *
  * @author <a href="https://www.inlym.com">inlym</a>
  * @since 1.0.0
  */
 @Configuration
-@RequiredArgsConstructor
 public class I18nConfig {
 
-    // ================================ 依赖注入 ================================
+    // ================================ 静态常量 ================================
 
-    /** 国际化配置属性 */
-    private final I18nProperties i18nProperties;
+    /** 默认语言 */
+    private static final Locale DEFAULT_LOCALE = Locale.forLanguageTag("zh-CN");
+
+    /** 支持的语言列表 */
+    private static final List<Locale> SUPPORTED_LOCALES = List.of(
+        Locale.forLanguageTag("zh-CN"),
+        Locale.forLanguageTag("en-US")
+    );
 
     // ================================ public 方法 ================================
 
@@ -32,49 +37,20 @@ public class I18nConfig {
      * 配置 LocaleResolver Bean
      *
      * <h3>配置说明
-     * <p>提供本地化解析器，用于确定应用程序的语言偏好，配置如下：
-     * <p>1. 使用 FixedLocaleResolver 根据配置文件中的固定语言设置
-     * <p>2. 默认语言通过 project.i18n.language 配置项指定，引用 feature.language 属性
-     * <p>3. 支持的语言包括中文、英文
+     * <p>使用 AcceptHeaderLocaleResolver 解析客户端 Accept-Language 请求头，根据支持的语言列表匹配。
      *
      * @return LocaleResolver 本地化解析器实例
      */
     @Bean
     public LocaleResolver localeResolver() {
-        return new FixedLocaleResolver(
-            i18nProperties.getLanguage().getLocale()
-        );
-    }
+        AcceptHeaderLocaleResolver resolver = new AcceptHeaderLocaleResolver();
 
-    /**
-     * 配置 MessageSource Bean
-     *
-     * <h3>配置说明
-     * <p>提供多语言消息源支持，配置如下：
-     * <p>1. 设置多语言文件基础路径为 classpath:i18n/messages
-     * <p>2. 支持动态刷新，便于开发调试
-     * <p>3. 使用 UTF-8 编码，支持中文字符
-     * <p>4. 设置缓存时间为 1 小时，生产环境可根据需要调整
-     * <p>5. 关闭系统区域回退，找不到对应语言时使用默认消息文件
-     *
-     * @return MessageSource 消息源实例
-     */
-    @Bean
-    public MessageSource messageSource() {
-        ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
+        // 限定可识别的语言为中文和英文，白名单外的请求回退到默认语言
+        resolver.setSupportedLocales(SUPPORTED_LOCALES);
 
-        // 设置多语言文件基础路径
-        messageSource.setBasename("classpath:i18n/messages");
+        // 设置回退语言，用于客户端未发送 Accept-Language 或请求语言不在白名单时的兜底
+        resolver.setDefaultLocale(DEFAULT_LOCALE);
 
-        // 设置默认编码为 UTF-8
-        messageSource.setDefaultEncoding("UTF-8");
-
-        // 设置缓存时间，生产环境建议设置更长缓存时间
-        messageSource.setCacheSeconds(3600);
-
-        // 关闭系统区域回退，未命中对应语言时回退到默认消息文件而非 JVM 系统区域
-        messageSource.setFallbackToSystemLocale(false);
-
-        return messageSource;
+        return resolver;
     }
 }

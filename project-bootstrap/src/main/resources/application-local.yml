@@ -91,10 +91,3 @@ management:
         tags:
             # 运行环境标识，便于在 Prometheus 中按环境聚合
             env: "local"
-
-# 项目自定义配置
-project:
-    # 国际化配置
-    i18n:
-        # 语言类型（可选值：CHINESE、ENGLISH）
-        language: "CHINESE"
