@@ -48,7 +48,7 @@
         <spring-ai.version>2.0.0</spring-ai.version>
 
         <!-- 构建开关 -->
-        <skipTests>true</skipTests>
+        <skipTests>false</skipTests>
     </properties>
 
     <!-- ===== 公共依赖：所有模块强制继承的最小依赖集合 ===== -->
@@ -106,6 +106,13 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Spring Boot WebMvc Test：Spring Boot 4 将 @WebMvcTest / @AutoConfigureMockMvc 等 web 切片测试注解拆分到独立模块，需显式声明 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-webmvc-test</artifactId>
             <scope>test</scope>
         </dependency>
 
