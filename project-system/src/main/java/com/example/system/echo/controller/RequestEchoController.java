@@ -21,7 +21,7 @@ import java.util.Map;
  * <p>提供 HTTP 请求信息回显接口，用于调试客户端发送的完整请求数据。
  *
  * @module 系统运维
- * @folder 请求回显
+ * @folder 系统运维
  *
  * @author <a href="https://www.inlym.com">inlym</a>
  * @since 1.0.0

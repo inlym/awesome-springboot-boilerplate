@@ -1,5 +1,7 @@
 package com.example.bootstrap;
 
+import org.apache.ibatis.annotations.Mapper;
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -7,12 +9,13 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * 应用程序启动类
  *
  * <h2>功能说明
- * <p>项目的主启动入口，负责初始化 Spring Boot 应用程序上下文，配置组件扫描范围。
+ * <p>项目的主启动入口，负责初始化 Spring Boot 应用程序上下文，配置组件扫描和数据访问层映射。
  *
  * @author <a href="https://www.inlym.com">inlym</a>
  * @since 1.0.0
  */
 @SpringBootApplication(scanBasePackages = {"com.example"})
+@MapperScan(basePackages = {"com.example"}, annotationClass = Mapper.class)
 public class Application {
 
     /**
