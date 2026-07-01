@@ -63,7 +63,7 @@ awesome-springboot-boilerplate/
 
 - `Application.java`：主启动类，扫描 `com.example` 包，`@MapperScan` 扫描 `com.example.**.mapper`
 - `application.yml`：通用配置
-- `application-local.yml`：本地环境配置（占位符凭证，需替换）
+- `application-local.yml`：本地环境配置，敏感凭证通过 `spring.config.import` 从外部文件引入
 - `logback-spring.xml`：结构化日志配置
 - `i18n/messages_{zh,en}.properties`：通用响应消息
 
@@ -76,21 +76,23 @@ awesome-springboot-boilerplate/
 - MySQL 8+
 - Redis 7+
 
-### 2. 配置数据库与 Redis
+### 2. 配置密钥文件
 
-编辑 `project-bootstrap/src/main/resources/application-local.yml`，替换占位符：
+敏感凭证（数据库密码、API 密钥等）存放在项目目录之外的密钥文件中，通过 `spring.config.import` 引入，避免凭证泄露到版本控制。
+
+在 `~/.config/` 目录下创建 `application-local-secret.yml`，填入真实值：
 
 ```yaml
-spring:
-    datasource:
-        url: jdbc:mysql://your-mysql-host:3306/your-database?...
-        username: "your-username"
-        password: "your-password"
-    data:
-        redis:
-            host: "your-redis-host"
-            password: "your-password"
+MYSQL_HOST: "localhost"
+MYSQL_USERNAME: "root"
+MYSQL_PASSWORD: "your-password"
+REDIS_HOST: "localhost"
+REDIS_USERNAME: ""
+REDIS_PASSWORD: ""
+OPENAI_API_KEY: "sk-your-key"
 ```
+
+`application-local.yml` 已通过 `file:${user.home}/.config/application-local-secret.yml` 导入该文件，并使用 `${MYSQL_HOST}` 等占位符引用其中的值。只需确保密钥文件路径正确、变量名匹配即可。
 
 ### 3. 启动应用
 
@@ -166,7 +168,7 @@ mv project-core/src/main/java/com/example project-core/src/main/java/com/yourbra
 
 模板当前仅提供 `local` profile（默认）。切换方式：修改 `application.yml` 的 `spring.profiles.active`，或启动时通过
 `--spring.profiles.active=<profile>` 指定。新增环境时在 `project-bootstrap/src/main/resources/` 下创建对应的
-`application-<profile>.yml`，并按需补充对应的凭证配置。
+`application-<profile>.yml`，并按需通过 `spring.config.import` 引入外部密钥文件。
 
 ### 日志
 

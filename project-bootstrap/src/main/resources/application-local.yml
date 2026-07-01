@@ -1,5 +1,50 @@
 # 本地开发环境配置文件
 
+# Spring 框架配置
+spring:
+    # 外部配置导入
+    config:
+        # 导入用户目录下的密钥配置文件，该文件不纳入版本控制
+        import: file:${user.home}/.config/application-local-secret.yml
+
+    # 数据源配置
+    datasource:
+        # 数据库连接 URL，连接本机 MySQL 实例的 project_server 库
+        url: jdbc:mysql://${MYSQL_HOST}:3306/project_server
+        # 数据库用户名
+        username: ${MYSQL_USERNAME}
+        # 数据库密码
+        password: ${MYSQL_PASSWORD}
+
+    # Spring Data 配置
+    data:
+        # Redis 缓存配置
+        redis:
+            # Redis 服务器地址
+            host: ${REDIS_HOST}
+            # Redis 用户名
+            username: ${REDIS_USERNAME}
+            # Redis 密码
+            password: ${REDIS_PASSWORD}
+            # Redis 数据库编号
+            database: 0
+            # Redis 服务端口
+            port: 6379
+
+    # 输出配置
+    output:
+        # ANSI 彩色输出配置
+        ansi:
+            # 始终启用彩色输出（可选值：ALWAYS、NEVER、DETECT），便于本地日志查看和调试
+            enabled: ALWAYS
+
+    # Spring AI 配置
+    ai:
+        # OpenAI 配置
+        openai:
+            # OpenAI API 密钥
+            api-key: ${OPENAI_API_KEY}
+
 # 服务器配置
 server:
     # 服务端口，本地开发使用固定端口避免冲突
@@ -17,46 +62,6 @@ logging:
     # 日志文件存储目录，macOS 无 /var/log 写权限，改用项目本地目录
     file:
         path: ./logs
-
-# Spring 框架配置
-spring:
-    # 数据源配置
-    datasource:
-        # 数据库连接 URL，连接本机 MySQL 实例的 project_server 库
-        url: jdbc:mysql://localhost:3306/project_server
-        # 数据库用户名，本地开发沿用 root 账号
-        username: "root"
-        # 数据库密码，root 已重置为空密码（本地开发环境）
-        password: ""
-
-    # Spring Data 配置
-    data:
-        # Redis 缓存配置
-        redis:
-            # Redis 服务器地址，连接本机 Homebrew 启动的 Redis 实例
-            host: "localhost"
-            # Redis 数据库编号
-            database: 0
-            # Redis 服务端口
-            port: 6379
-            # 连接超时时间（毫秒）
-            connect-timeout: 2000
-            # 命令执行超时时间（毫秒）
-            timeout: 20000
-
-    # 输出配置
-    output:
-        # ANSI 彩色输出配置
-        ansi:
-            # 始终启用彩色输出（可选值：ALWAYS、NEVER、DETECT），便于本地日志查看和调试
-            enabled: ALWAYS
-
-    # Spring AI 配置
-    ai:
-        # OpenAI 配置
-        openai:
-            # OpenAI API 密钥，通过环境变量注入；本地开发可在 IDE Run Configuration 或 .env 中设置
-            api-key: ${OPENAI_API_KEY}
 
 # Spring Boot Actuator 监控端点配置
 management:
