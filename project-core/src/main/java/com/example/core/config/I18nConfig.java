@@ -55,6 +55,7 @@ public class I18nConfig {
      * <p>2. 支持动态刷新，便于开发调试
      * <p>3. 使用 UTF-8 编码，支持中文字符
      * <p>4. 设置缓存时间为 1 小时，生产环境可根据需要调整
+     * <p>5. 关闭系统区域回退，找不到对应语言时使用默认消息文件
      *
      * @return MessageSource 消息源实例
      */
@@ -70,6 +71,9 @@ public class I18nConfig {
 
         // 设置缓存时间，生产环境建议设置更长缓存时间
         messageSource.setCacheSeconds(3600);
+
+        // 关闭系统区域回退，未命中对应语言时回退到默认消息文件而非 JVM 系统区域
+        messageSource.setFallbackToSystemLocale(false);
 
         return messageSource;
     }

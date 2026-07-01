@@ -66,15 +66,6 @@ spring:
         # 缓存类型，使用 Redis 作为缓存实现
         type: redis
 
-    # 国际化消息配置
-    messages:
-        # 默认编码
-        encoding: UTF-8
-        # 消息缓存时间（秒），生产环境可以提高性能
-        cache-duration: 3600
-        # 找不到消息时是否回退到系统区域设置
-        fallback-to-system-locale: false
-
     # Spring AI 配置
     ai:
         # OpenAI 配置

@@ -2,16 +2,17 @@ package com.example.core.support.ws;
 
 import com.example.core.exception.WebSocketException;
 import com.example.core.model.ws.WsTextMessage;
-import com.example.core.util.JsonUtils;
 import com.example.core.util.LogUtils;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.socket.BinaryMessage;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketMessage;
 import org.springframework.web.socket.WebSocketSession;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.io.IOException;
 import java.time.Instant;
@@ -34,7 +35,11 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 @Slf4j
 @Validated
+@RequiredArgsConstructor
 public abstract class WebSocketManager {
+
+    /** JSON 序列化器 */
+    private final JsonMapper jsonMapper;
 
     /**
      * WebSocket 会话映射表
@@ -152,7 +157,7 @@ public abstract class WebSocketManager {
         message.setTimestamp(Instant.now());
 
         // 序列化为 JSON 后构建文本帧并发送
-        String json = JsonUtils.stringify(message);
+        String json = jsonMapper.writeValueAsString(message);
         boolean sent = doSend(webSocketId, new TextMessage(json));
         if (sent) {
             log.debug("发送文本消息，内容：{}", json);

@@ -68,9 +68,9 @@ public class GlobalExceptionHandler {
      * <p>通常由 Spring Security 的 {@code @Secured} 注解检查失败时抛出。
      *
      * @param e 访问拒绝异常
-     * @return 错误响应，HTTP 状态码 401，错误码为 5
+     * @return 错误响应，HTTP 状态码 403，错误码为 5
      */
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
     @ExceptionHandler(AccessDeniedException.class)
     public ErrorResponse handleAccessDenied(AccessDeniedException e) {
         log.warn("访问拒绝: {}", e.getMessage());

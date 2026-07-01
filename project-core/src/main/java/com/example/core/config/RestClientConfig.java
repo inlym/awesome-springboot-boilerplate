@@ -1,11 +1,15 @@
 package com.example.core.config;
 
 import com.example.core.support.http.HttpLoggingInterceptor;
+import org.springframework.boot.http.client.ClientHttpRequestFactoryBuilder;
+import org.springframework.boot.http.client.HttpClientSettings;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.BufferingClientHttpRequestFactory;
-import org.springframework.http.client.SimpleClientHttpRequestFactory;
+import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.web.client.RestClient;
+
+import java.time.Duration;
 
 /**
  * REST 客户端配置类
@@ -24,21 +28,26 @@ public class RestClientConfig {
      * 默认 REST 客户端
      *
      * <h3>配置项
-     * <p>连接超时 5 秒，读取超时 10 秒。
+     * <p>基于 JDK 内置 HttpClient（Java 25），连接超时 5 秒，读取超时 10 秒。
      * <p>使用缓冲包装支持响应体重复读取，用于日志记录。
      *
-     * @return 配置好的 RestClient 实例
+     * @param builder Spring Boot 预配置的构建器，已注入消息转换器等默认组件
+     * @return 配置好的 RestClient 实例，不为 null
      */
     @Bean
-    public RestClient restClient() {
-        // 配置请求超时参数
-        SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
-        requestFactory.setConnectTimeout(5000);
-        requestFactory.setReadTimeout(10000);
+    public RestClient restClient(RestClient.Builder builder) {
+        // 基于 JDK HttpClient 构造请求工厂，替代旧的 SimpleClientHttpRequestFactory（基于 HttpURLConnection）
+        ClientHttpRequestFactory factory = ClientHttpRequestFactoryBuilder
+            .jdk()
+            .build(
+                HttpClientSettings
+                    .defaults()
+                    .withConnectTimeout(Duration.ofSeconds(5))
+                    .withReadTimeout(Duration.ofSeconds(10))
+            );
 
-        return RestClient
-            .builder()
-            .requestFactory(new BufferingClientHttpRequestFactory(requestFactory))
+        return builder
+            .requestFactory(new BufferingClientHttpRequestFactory(factory))
             .requestInterceptor(new HttpLoggingInterceptor())
             .build();
     }

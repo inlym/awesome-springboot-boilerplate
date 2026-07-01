@@ -1,5 +1,6 @@
 package com.example.core.support.jackson;
 
+import org.springframework.boot.jackson.JacksonComponent;
 import tools.jackson.core.JsonParser;
 import tools.jackson.databind.DeserializationContext;
 import tools.jackson.databind.ValueDeserializer;
@@ -16,6 +17,7 @@ import java.time.Instant;
  * @author <a href="https://www.inlym.com">inlym</a>
  * @since 1.0.0
  */
+@JacksonComponent
 public class InstantMillisDeserializer extends ValueDeserializer<Instant> {
 
     /**
