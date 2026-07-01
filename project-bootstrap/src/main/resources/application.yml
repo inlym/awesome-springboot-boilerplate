@@ -10,7 +10,7 @@ spring:
 
     # Spring 环境配置
     profiles:
-        # 激活的配置文件，默认为本地开发环境
+        # 激活的配置文件
         active: local
 
     # 主应用配置
@@ -66,9 +66,6 @@ spring:
 
 # 服务器配置
 server:
-    # 服务端口
-    port: 35025
-
     # 优雅关闭配置
     shutdown: graceful
 
@@ -78,13 +75,13 @@ management:
     endpoints:
         web:
             exposure:
-                # 暴露的端点列表，仅暴露无敏感信息的端点；本地环境可在 profile 中覆盖为 "*"
+                # 暴露的端点列表，仅暴露无敏感信息的端点
                 include: "health,info"
 
     # 单端点配置
     endpoint:
         health:
-            # 展示组件细节的时机（可选值：never、always、when-authorized）；本地环境可在 profile 中覆盖为 always
+            # 展示组件细节的时机（可选值：never、always、when-authorized）
             show-details: when-authorized
 
     # 指标通用标签，所有 Micrometer 指标都会自动携带，便于在 Prometheus 中按维度聚合
