@@ -1,10 +1,13 @@
 package com.example.core.config;
 
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.i18n.AcceptHeaderLocaleResolver;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Locale;
 
@@ -12,7 +15,8 @@ import java.util.Locale;
  * 国际化配置类
  *
  * <h2>配置说明
- * <p>配置 LocaleResolver，根据客户端 Accept-Language 请求头解析语言。MessageSource 由 Spring Boot 自动配置，配置项见 spring.messages。
+ * <p>配置国际化相关 Bean：MessageSource 加载多语言资源文件，LocaleResolver 根据客户端 Accept-Language 请求头解析语言。
+ * <p>MessageSource 在此显式声明，替代 Spring Boot 自动配置——自动配置要求默认资源文件（messages.properties）存在，而本项目只保留语言特定的资源文件。
  *
  * @author <a href="https://www.inlym.com">inlym</a>
  * @since 1.0.0
@@ -30,6 +34,9 @@ public class I18nConfig {
         Locale.forLanguageTag("zh-CN"),
         Locale.forLanguageTag("en-US")
     );
+
+    /** 多语言资源文件基础路径 */
+    private static final String MESSAGE_SOURCE_BASENAME = "i18n/messages";
 
     // ================================ public 方法 ================================
 
@@ -52,5 +59,29 @@ public class I18nConfig {
         resolver.setDefaultLocale(DEFAULT_LOCALE);
 
         return resolver;
+    }
+
+    /**
+     * 配置 MessageSource Bean
+     *
+     * <h3>配置说明
+     * <p>基于 ResourceBundleMessageSource 从 classpath 加载多语言资源文件，未命中对应语言时不回退到 JVM 系统区域。
+     *
+     * @return MessageSource 消息源实例
+     */
+    @Bean
+    public MessageSource messageSource() {
+        ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
+
+        // 设置资源文件基础路径
+        messageSource.setBasename(MESSAGE_SOURCE_BASENAME);
+
+        // 设置资源文件编码
+        messageSource.setDefaultEncoding(StandardCharsets.UTF_8.name());
+
+        // 关闭系统区域回退，未命中对应语言时返回 null 而非回退到 JVM 系统区域
+        messageSource.setFallbackToSystemLocale(false);
+
+        return messageSource;
     }
 }

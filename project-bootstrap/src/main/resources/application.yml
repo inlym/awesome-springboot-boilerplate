@@ -66,15 +66,6 @@ spring:
         # 缓存类型，使用 Redis 作为缓存实现
         type: redis
 
-    # 国际化消息源配置
-    messages:
-        # 多语言资源文件基础路径
-        basename: i18n/messages
-        # 资源文件缓存时间，生产环境可适当延长
-        cache-duration: 3600s
-        # 关闭系统区域回退，未命中对应语言时回退到默认消息文件而非 JVM 系统区域
-        fallback-to-system-locale: false
-
     # Spring AI 配置
     ai:
         # OpenAI 配置
