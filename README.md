@@ -90,6 +90,8 @@ REDIS_HOST: "localhost"
 REDIS_USERNAME: ""
 REDIS_PASSWORD: ""
 OPENAI_API_KEY: "sk-your-key"
+OTLP_HTTP_TRACING_ENDPOINT: "http://tracing-analysis-dc-hz.aliyuncs.com/adapt_<instance>@<token>/api/otlp/traces"
+OTLP_HTTP_METRICS_ENDPOINT: "http://tracing-analysis-dc-hz.aliyuncs.com/adapt_<instance>@<token>/api/otlp/metrics"
 ```
 
 `application-local.yml` 已通过 `file:${user.home}/.config/application-local-secret.yml` 导入该文件，并使用 `${MYSQL_HOST}` 等占位符引用其中的值。只需确保密钥文件路径正确、变量名匹配即可。

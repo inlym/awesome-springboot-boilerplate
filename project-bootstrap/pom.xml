@@ -53,6 +53,18 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-micrometer-tracing-opentelemetry</artifactId>
         </dependency>
+
+        <!-- OpenTelemetry OTLP exporter，通过 HTTP 协议将 span 上报到远端可观测后端 -->
+        <dependency>
+            <groupId>io.opentelemetry</groupId>
+            <artifactId>opentelemetry-exporter-otlp</artifactId>
+        </dependency>
+
+        <!-- Micrometer OTLP 注册表，将 Micrometer 指标通过 OTLP HTTP 协议推送到远端可观测后端 -->
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-registry-otlp</artifactId>
+        </dependency>
     </dependencies>
 
     <!-- ===== 构建配置：定制可执行 Jar 输出与打包插件 ===== -->
