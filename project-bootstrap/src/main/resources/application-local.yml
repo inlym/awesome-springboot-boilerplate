@@ -30,6 +30,9 @@ spring:
             database: 0
             # Redis 服务端口
             port: 6379
+            # 启用 Redis TLS 加密
+            ssl:
+                enabled: true
 
     # 输出配置
     output:
