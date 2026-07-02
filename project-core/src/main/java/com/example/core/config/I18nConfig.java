@@ -1,5 +1,7 @@
 package com.example.core.config;
 
+import com.example.core.extension.MessageSourceBasenameCustomizer;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,10 +20,14 @@ import java.util.Locale;
  * <p>配置国际化相关 Bean：MessageSource 加载多语言资源文件，LocaleResolver 根据客户端 Accept-Language 请求头解析语言。
  * <p>MessageSource 在此显式声明，替代 Spring Boot 自动配置——自动配置要求默认资源文件（messages.properties）存在，而本项目只保留语言特定的资源文件。
  *
+ * <h2>扩展机制说明
+ * <p>核心模块自身的资源文件 basename 在此直接配置；业务模块通过 MessageSourceBasenameCustomizer 接口声明各自的 basename，由核心模块自动收集并统一注册。
+ *
  * @author <a href="https://www.inlym.com">inlym</a>
  * @since 1.0.0
  */
 @Configuration
+@RequiredArgsConstructor
 public class I18nConfig {
 
     // ================================ 静态常量 ================================
@@ -35,8 +41,11 @@ public class I18nConfig {
         Locale.forLanguageTag("en-US")
     );
 
-    /** 多语言资源文件基础路径 */
-    private static final String MESSAGE_SOURCE_BASENAME = "i18n/messages";
+    /** 核心模块多语言资源文件 basename */
+    private static final String CORE_BASENAME = "i18n/core";
+
+    /** 消息源 basename 定制器列表 */
+    private final List<MessageSourceBasenameCustomizer> customizers;
 
     // ================================ public 方法 ================================
 
@@ -65,7 +74,7 @@ public class I18nConfig {
      * 配置 MessageSource Bean
      *
      * <h3>配置说明
-     * <p>基于 ResourceBundleMessageSource 从 classpath 加载多语言资源文件，未命中对应语言时不回退到 JVM 系统区域。
+     * <p>基于 ResourceBundleMessageSource 从 classpath 加载核心模块自身的多语言资源文件，以及各业务模块通过定制器声明的资源文件，未命中对应语言时不回退到 JVM 系统区域。
      *
      * @return MessageSource 消息源实例
      */
@@ -73,8 +82,13 @@ public class I18nConfig {
     public MessageSource messageSource() {
         ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
 
-        // 设置资源文件基础路径
-        messageSource.setBasename(MESSAGE_SOURCE_BASENAME);
+        // 注册核心模块自身的 basename
+        messageSource.setBasename(CORE_BASENAME);
+
+        // 注册各业务模块通过定制器声明的 basename
+        customizers.forEach(customizer -> messageSource.addBasenames(
+            customizer.declareBasenames().toArray(String[]::new)
+        ));
 
         // 设置资源文件编码
         messageSource.setDefaultEncoding(StandardCharsets.UTF_8.name());
