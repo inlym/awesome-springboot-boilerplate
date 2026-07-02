@@ -68,6 +68,11 @@ logging:
 
 # Spring Boot Actuator 监控端点配置
 management:
+    # 管理服务器配置
+    server:
+        # 管理服务端口，独立于主服务端口，避免 actuator 端点暴露在主端口上
+        port: 35035
+
     # 端点 Web 暴露配置
     endpoints:
         web:
