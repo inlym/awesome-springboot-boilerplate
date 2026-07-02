@@ -11,7 +11,7 @@
 - **Redis**（缓存与会话）
 - **Spring Security** + 自定义注解（鉴权）
 - **Spring AI** 2.0.0（OpenAI / Bedrock 集成）
-- **Micrometer** + **Prometheus**（指标监控）
+- **Micrometer** + **OpenTelemetry**（指标与链路追踪）
 - **Logback** + **Logstash JSON Encoder**（结构化日志）
 - **Maven** 多模块 + `flatten-maven-plugin`（统一版本管理）
 
@@ -90,8 +90,7 @@ REDIS_HOST: "localhost"
 REDIS_USERNAME: ""
 REDIS_PASSWORD: ""
 OPENAI_API_KEY: "sk-your-key"
-OTLP_HTTP_TRACING_ENDPOINT: "http://tracing-analysis-dc-hz.aliyuncs.com/adapt_<instance>@<token>/api/otlp/traces"
-OTLP_HTTP_METRICS_ENDPOINT: "http://tracing-analysis-dc-hz.aliyuncs.com/adapt_<instance>@<token>/api/otlp/metrics"
+OTLP_ENDPOINT: "http://tracing-analysis-dc-hz.aliyuncs.com/adapt_<instance>@<token>/api/otlp"
 ```
 
 `application-local.yml` 已通过 `file:${user.home}/.config/application-local-secret.yml` 导入该文件，并使用 `${MYSQL_HOST}` 等占位符引用其中的值。只需确保密钥文件路径正确、变量名匹配即可。
@@ -181,7 +180,7 @@ mv project-core/src/main/java/com/example project-core/src/main/java/com/yourbra
 
 ### 监控端点
 
-`/actuator/health`、`/actuator/info`、`/actuator/metrics`、`/actuator/prometheus`（local 环境暴露全部）。
+`/actuator/health`、`/actuator/info`、`/actuator/metrics`（local 环境暴露全部）。
 
 ## 项目约定
 

@@ -128,12 +128,6 @@
             <artifactId>spring-ai-starter-model-openai</artifactId>
         </dependency>
 
-        <!-- Micrometer Prometheus 注册表：将 Micrometer 指标以 Prometheus 格式暴露在 /actuator/prometheus 端点 -->
-        <dependency>
-            <groupId>io.micrometer</groupId>
-            <artifactId>micrometer-registry-prometheus</artifactId>
-        </dependency>
-
         <!-- Micrometer Observation：提供 ObservationRegistry、ObservationThreadLocalAccessor -->
         <dependency>
             <groupId>io.micrometer</groupId>

@@ -89,5 +89,5 @@ management:
     # 指标环境标签
     metrics:
         tags:
-            # 运行环境标识，便于在 Prometheus 中按环境聚合
+            # 运行环境标识，便于在多环境场景下按环境维度聚合指标
             env: "local"

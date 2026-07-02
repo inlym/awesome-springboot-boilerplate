@@ -1,0 +1,91 @@
+// ================================ Grafana Alloy 配置文件 ================================
+// 遥测数据收集代理，作为应用 sidecar 运行，负责接收、处理和转发 traces、metrics、logs。
+//
+// 信号流：
+//   Application ──(OTLP HTTP)──> Alloy ──(OTLP HTTP)──> Traces Backend (Tempo / Grafana Cloud)
+//   Application ──(OTLP HTTP)──> Alloy ──(OTLP HTTP)──> Metrics Backend (Mimir / Grafana Cloud)
+//   Log Files   ──(file tail)──> Alloy ──(Loki API)────> Logs Backend (Loki / Grafana Cloud)
+//
+// 启动命令：
+//   alloy run --server.http.listen-addr=0.0.0.0:12345 --storage.path=/var/lib/alloy/data /etc/alloy/config.alloy
+
+// ================================ 接收层 ================================
+
+// OTLP 接收器：接收应用通过 OTLP HTTP/gRPC 推送的 traces 和 metrics
+otelcol.receiver.otlp "default" {
+    http {
+        endpoint = "0.0.0.0:4318"
+    }
+    grpc {
+        endpoint = "0.0.0.0:4317"
+    }
+
+    output {
+        metrics = [otelcol.processor.memory_limiter.default.input]
+        traces  = [otelcol.processor.memory_limiter.default.input]
+    }
+}
+
+// 日志文件监控：实时采集应用写入的 JSON 结构化日志文件
+// 日志路径与应用 logback-spring.xml 中 LOG_PATH 保持一致，通过共享卷挂载
+loki.source.file "app_logs" {
+    targets {
+        // 日志文件路径，匹配应用生成的 JSON 日志文件（app.log 及历史滚动文件）
+        __path__ = "/var/log/awesome-springboot-boilerplate/app*.log"
+        // 任务标识，在 Loki 中作为 job 标签区分不同日志来源
+        job = "awesome-springboot-boilerplate"
+    }
+    forward_to = [loki.process.logs.receiver]
+}
+
+// ================================ 处理层 ================================
+
+// 内存限制器：防止 Alloy 因突发流量导致内存溢出
+otelcol.processor.memory_limiter "default" {
+    // 内存检查间隔
+    check_interval = "1s"
+    // 内存上限（MB），根据容器内存配额调整
+    limit_mib = 512
+    output {
+        metrics = [otelcol.processor.batch.default.input]
+        traces  = [otelcol.processor.batch.default.input]
+    }
+}
+
+// 批量处理器：将多个遥测数据项合并为批次，减少网络请求频率，提升吞吐量
+otelcol.processor.batch "default" {
+    output {
+        metrics = [otelcol.exporter.otlphttp.backend.input]
+        traces  = [otelcol.exporter.otlphttp.backend.input]
+    }
+}
+
+// 日志标签处理：为日志添加 service_name 静态标签，便于在 Loki 中按服务筛选
+loki.process "logs" {
+    stage.static_labels {
+        values = {
+            // 服务名称，与 application.yml 中 spring.application.name 保持一致
+            service_name = "awesome-springboot-boilerplate",
+        }
+    }
+    forward_to = [loki.write.backend.receiver]
+}
+
+// ================================ 导出层 ================================
+
+// OTLP HTTP 导出器：将 traces 和 metrics 转发到远端可观测后端
+// 目标地址通过环境变量 OTLP_BACKEND_ENDPOINT 配置
+otelcol.exporter.otlphttp "backend" {
+    client {
+        // 后端 OTLP 接入点地址（如 Tempo、Mimir、Grafana Cloud OTLP Gateway）
+        endpoint = env("OTLP_BACKEND_ENDPOINT")
+    }
+}
+
+// Loki 写入器：将采集的应用日志推送到 Loki
+// 目标地址通过环境变量 LOKI_ENDPOINT 配置
+loki.write "backend" {
+    endpoint {
+        url = env("LOKI_ENDPOINT")
+    }
+}
