@@ -5,6 +5,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.jspecify.annotations.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 import org.springframework.core.Ordered;
@@ -58,7 +59,7 @@ public class DirectAccessIpFilter extends OncePerRequestFilter implements Ordere
      * @return true 表示跳过过滤处理，false 表示执行过滤处理
      */
     @Override
-    protected boolean shouldNotFilter(HttpServletRequest request) {
+    protected boolean shouldNotFilter(@NonNull HttpServletRequest request) {
         String host = request.getHeader("Host");
         return host == null || !host.contains(":");
     }
@@ -80,9 +81,9 @@ public class DirectAccessIpFilter extends OncePerRequestFilter implements Ordere
      */
     @Override
     protected void doFilterInternal(
-        HttpServletRequest request,
-        HttpServletResponse response,
-        FilterChain filterChain
+        @NonNull HttpServletRequest request,
+        @NonNull HttpServletResponse response,
+        @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
 
         String clientIp = request.getRemoteAddr();
@@ -92,9 +93,8 @@ public class DirectAccessIpFilter extends OncePerRequestFilter implements Ordere
             request.setAttribute(ContextKeys.CLIENT_IP, clientIp);
         }
 
-        // 将请求属性中的客户端 IP 镜像到 MDC，供日志输出 clientIp 字段
-        String resolvedClientIp = (String) request.getAttribute(ContextKeys.CLIENT_IP);
-        if (resolvedClientIp != null) {
+        // 将请求属性中的客户端 IP 镜像到 MDC，供日志输出
+        if (request.getAttribute(ContextKeys.CLIENT_IP) instanceof String resolvedClientIp) {
             MDC.put(ContextKeys.CLIENT_IP, resolvedClientIp);
             log.trace("获取客户端 IP 地址完成：{}", resolvedClientIp);
         }
