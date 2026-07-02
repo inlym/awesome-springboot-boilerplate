@@ -84,6 +84,13 @@ management:
             # 展示组件细节的时机（可选值：never、always、when-authorized）
             show-details: when-authorized
 
+    # 健康检查组件配置
+    health:
+        # SSL 健康检查
+        ssl:
+            # 禁用 SSL 健康检查，项目未启用 HTTPS
+            enabled: false
+
     # 指标通用标签，所有 Micrometer 指标都会自动携带，便于在 Prometheus 中按维度聚合
     metrics:
         tags:
