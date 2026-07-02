@@ -22,8 +22,8 @@ public final class ContextKeys {
     public static final String TRACE_ID = "traceId";
 
     /** 客户端 IP 地址 */
-    public static final String CLIENT_IP = "CLIENT_IP";
+    public static final String CLIENT_IP = "clientIp";
 
     /** 用户 ID */
-    public static final String USER_ID = "USER_ID";
+    public static final String USER_ID = "userId";
 }

@@ -92,7 +92,7 @@ public class DirectAccessIpFilter extends OncePerRequestFilter implements Ordere
             request.setAttribute(ContextKeys.CLIENT_IP, clientIp);
         }
 
-        // 将请求属性中的客户端 IP 镜像到 MDC，供日志输出 CLIENT_IP 字段
+        // 将请求属性中的客户端 IP 镜像到 MDC，供日志输出 clientIp 字段
         String resolvedClientIp = (String) request.getAttribute(ContextKeys.CLIENT_IP);
         if (resolvedClientIp != null) {
             MDC.put(ContextKeys.CLIENT_IP, resolvedClientIp);

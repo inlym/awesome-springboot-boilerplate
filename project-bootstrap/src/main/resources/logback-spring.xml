@@ -76,7 +76,7 @@
             <!-- 启动时清理过期文件 -->
             <cleanHistoryOnStart>true</cleanHistoryOnStart>
         </rollingPolicy>
-        <!-- 使用自定义 JSON 格式化器，去掉 APP_NAME 和 LOG_LEVEL 字段，将 traceId 和 CLIENT_IP 提升到顶级 -->
+        <!-- 使用自定义 JSON 格式化器，去掉 APP_NAME 和 LOG_LEVEL 字段，将 traceId 和 clientIp 提升到顶级 -->
         <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
             <providers>
                 <!-- 时间戳字段 -->
@@ -98,11 +98,11 @@
                 </loggerName>
                 <!-- 消息字段 -->
                 <message/>
-                <!-- MDC 字段：提取 traceId、spanId、CLIENT_IP 到顶级 -->
+                <!-- MDC 字段：提取 traceId、spanId、clientIp 到顶级 -->
                 <mdc>
                     <includeMdcKeyName>traceId</includeMdcKeyName>
                     <includeMdcKeyName>spanId</includeMdcKeyName>
-                    <includeMdcKeyName>CLIENT_IP</includeMdcKeyName>
+                    <includeMdcKeyName>clientIp</includeMdcKeyName>
                 </mdc>
                 <!-- 异常堆栈字段 -->
                 <stackTrace>
