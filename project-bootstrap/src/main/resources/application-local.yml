@@ -9,8 +9,8 @@ spring:
 
     # 数据源配置
     datasource:
-        # 数据库连接 URL，连接本机 MySQL 实例的 project_server 库
-        url: jdbc:mysql://${MYSQL_HOST}:3306/project_server
+        # 数据库连接 URL，连接本机 MySQL 实例的 awesome_project_database 库
+        url: jdbc:mysql://${MYSQL_HOST}:3306/awesome_project_database
         # 数据库用户名
         username: ${MYSQL_USERNAME}
         # 数据库密码
