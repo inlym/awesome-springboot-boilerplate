@@ -41,6 +41,18 @@
             <groupId>net.logstash.logback</groupId>
             <artifactId>logstash-logback-encoder</artifactId>
         </dependency>
+
+        <!-- OpenTelemetry tracing bridge，提供 OtelTracer 实现与 OTel SDK，是 tracing 的底层适配层 -->
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-tracing-bridge-otel</artifactId>
+        </dependency>
+
+        <!-- Spring Boot 4.x tracing autoconfig 模块，装配 Tracer bean、TracingObservationHandler 和 Slf4jScopeDecorator，使 bridge 生效并将 traceId/spanId 注入 MDC -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-micrometer-tracing-opentelemetry</artifactId>
+        </dependency>
     </dependencies>
 
     <!-- ===== 构建配置：定制可执行 Jar 输出与打包插件 ===== -->

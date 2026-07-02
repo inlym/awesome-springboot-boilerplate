@@ -6,6 +6,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.MDC;
 import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -68,7 +69,8 @@ public class DirectAccessIpFilter extends OncePerRequestFilter implements Ordere
      * <h3>处理流程
      * <p>1. 通过 getRemoteAddr() 方法获取客户端 IP 地址
      * <p>2. 仅在客户端 IP 不为 null 且请求属性中为空时才赋值
-     * <p>3. 继续执行过滤器链
+     * <p>3. 将客户端 IP 镜像到 MDC，供日志输出
+     * <p>4. 继续执行过滤器链，结束后清理 MDC
      *
      * @param request     HTTP 请求对象
      * @param response    HTTP 响应对象
@@ -88,10 +90,20 @@ public class DirectAccessIpFilter extends OncePerRequestFilter implements Ordere
         // 仅在客户端 IP 不为 null 且请求属性中为空时才赋值
         if (clientIp != null && request.getAttribute(ContextKeys.CLIENT_IP) == null) {
             request.setAttribute(ContextKeys.CLIENT_IP, clientIp);
-            log.trace("获取客户端 IP 地址完成：{}", clientIp);
         }
 
-        // 继续执行过滤器链
-        filterChain.doFilter(request, response);
+        // 将请求属性中的客户端 IP 镜像到 MDC，供日志输出 CLIENT_IP 字段
+        String resolvedClientIp = (String) request.getAttribute(ContextKeys.CLIENT_IP);
+        if (resolvedClientIp != null) {
+            MDC.put(ContextKeys.CLIENT_IP, resolvedClientIp);
+            log.trace("获取客户端 IP 地址完成：{}", resolvedClientIp);
+        }
+
+        try {
+            filterChain.doFilter(request, response);
+        } finally {
+            // 清理 MDC，避免 Servlet 容器线程复用导致客户端 IP 串到其他请求
+            MDC.remove(ContextKeys.CLIENT_IP);
+        }
     }
 }

@@ -17,6 +17,7 @@ awesome-springboot-boilerplate/
 
 **启动**: `cd project-bootstrap && mvn spring-boot:run`
 **调试**: `lsof -i :<port>` → `kill -9 <PID>`
+**依赖模块改动**: 改 project-core/system/account/demo 后需 `mvn install -DskipTests` 该模块（spring-boot:run 从 ~/.m2 加载依赖 jar，不读 target/classes）
 
 ---
 

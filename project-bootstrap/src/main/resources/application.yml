@@ -90,6 +90,16 @@ management:
             # 应用名标识，多服务场景下区分指标来源
             application: ${spring.application.name}
 
+    # 分布式链路追踪配置，引入 bridge 后 traceId/spanId 自动注入 MDC
+    tracing:
+        # 采样策略配置
+        sampling:
+            # 采样概率（可选值：0.0~1.0）
+            # 项目未配置 exporter，被采样的 span 不导出到任何后端（零网络成本）
+            # 设为 1.0 保证每个请求的 traceId/spanId 注入 MDC，实现全量日志按请求链路关联
+            # 生产环境接入追踪后端（如 Tempo）时按流量调低（如 0.1）
+            probability: 1.0
+
     # Info 端点贡献者配置
     info:
         # 暴露环境变量中以 info.* 开头的属性
