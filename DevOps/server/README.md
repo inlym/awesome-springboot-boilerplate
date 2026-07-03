@@ -27,14 +27,30 @@ sudo bash init-server.sh
 初始化完成后，按以下步骤部署 jar：
 
 1. 上传 jar 到 `/opt/awesome-springboot-boilerplate/app.jar`
-2. 按需创建 `/etc/default/awesome-springboot-boilerplate` 配置环境变量：
+2. 创建密钥配置文件 `~/.config/application-prod-secret.yml`，填入 `application.yml` 中 `${...}` 占位符的真实值（数据库、Redis、OpenAI、OTLP 接入点等）：
 
-   ```text
-   # JVM 参数
-   JAVA_OPTS=-Xmx512m
-   # Spring 激活的 profile（需对应已存在的 application-*.yml）
-   SPRING_PROFILES_ACTIVE=local
+   ```yaml
+   MYSQL_HOST: <MySQL 主机地址>
+   MYSQL_USERNAME: <MySQL 用户名>
+   MYSQL_PASSWORD: <MySQL 密码>
+
+   REDIS_HOST: <Redis 主机地址>
+   REDIS_USERNAME: <Redis 用户名，无则留空>
+   REDIS_PASSWORD: <Redis 密码>
+
+   OPENAI_API_KEY: <OpenAI API Key>
+
+   OTLP_HTTP_TRACING_ENDPOINT: <阿里云 Trace 接入点>
+   OTLP_HTTP_METRICS_ENDPOINT: <阿里云 Metric 接入点>
    ```
+
+   密钥文件含敏感信息，收紧权限：
+
+   ```bash
+   chmod 600 ~/.config/application-prod-secret.yml
+   ```
+
+   > 路径由 `application-prod.yml` 中 `spring.config.import: file:${user.home}/.config/application-prod-secret.yml` 决定，需与服务运行用户（systemd unit 中的 `User`）的家目录一致。降权运行时同步迁移该文件。
 
 3. 启动服务：
 

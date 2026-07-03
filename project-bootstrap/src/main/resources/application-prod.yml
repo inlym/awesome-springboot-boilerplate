@@ -4,8 +4,8 @@
 spring:
     # 外部配置导入
     config:
-        # 导入服务器固定路径下的密钥配置文件，该文件不纳入版本控制
-        import: file:/etc/awesome-springboot-boilerplate/application-prod-secret.yml
+        # 导入用户目录下的密钥配置文件，该文件不纳入版本控制
+        import: file:${user.home}/.config/application-prod-secret.yml
 
 # 服务器配置
 server:

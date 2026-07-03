@@ -2,7 +2,7 @@
 #
 # 安装位置：/etc/systemd/system/awesome-springboot-boilerplate.service
 # 部署目录：/opt/awesome-springboot-boilerplate/app.jar
-# 环境变量：/etc/default/awesome-springboot-boilerplate（可选）
+# 密钥配置：~/.config/application-prod-secret.yml（服务运行用户家目录下，详见 README）
 # 管理命令：systemctl {start|stop|restart|status|enable|disable} awesome-springboot-boilerplate
 
 [Unit]
@@ -18,9 +18,9 @@ Type=simple
 User=root
 # 工作目录，应用内相对路径（日志、临时文件）以此为基础
 WorkingDirectory=/opt/awesome-springboot-boilerplate
-# 环境变量文件，前缀 - 表示文件不存在时不报错；JAVA_OPTS 等可变配置在此文件中调整，无需修改 unit
-EnvironmentFile=-/etc/default/awesome-springboot-boilerplate
-# 启动命令，JAVA_OPTS 由 EnvironmentFile 注入；jar 路径为部署约定，迭代环节将 jar 放至此路径即可
+# JVM 启动参数，固定值，调整需修改本 unit 并执行 daemon-reload
+Environment=JAVA_OPTS=-Xmx512m
+# 启动命令，JAVA_OPTS 由上方 Environment 提供；jar 路径为部署约定，迭代环节将 jar 放至此路径即可
 # 显式指定生产环境 profile，覆盖 application.yml 中的默认值 local；命令行参数优先级最高，确保始终加载 application-prod.yml 及其密钥导入
 ExecStart=/usr/bin/java $JAVA_OPTS -jar /opt/awesome-springboot-boilerplate/app.jar --spring.profiles.active=prod
 # 进程异常退出时自动重启（正常退出 exit 0 不重启）
