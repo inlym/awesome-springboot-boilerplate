@@ -1,0 +1,39 @@
+# Awesome Springboot Boilerplate systemd 服务单元
+#
+# 安装位置：/etc/systemd/system/awesome-springboot-boilerplate.service
+# 部署目录：/opt/awesome-springboot-boilerplate/app.jar
+# 环境变量：/etc/default/awesome-springboot-boilerplate（可选）
+# 管理命令：systemctl {start|stop|restart|status|enable|disable} awesome-springboot-boilerplate
+
+[Unit]
+# 服务展示名称，systemctl status 和 journalctl 中显示
+Description=Awesome Springboot Boilerplate
+# 在网络栈就绪后再启动，避免应用启动期连接外部依赖时网络未初始化
+After=network.target
+
+[Service]
+# simple 类型：ExecStart 启动的进程即为主进程，systemd 直接跟踪其生命周期
+Type=simple
+# 以 root 身份运行（当前部署阶段决策，后续可降权为专用系统用户）
+User=root
+# 工作目录，应用内相对路径（日志、临时文件）以此为基础
+WorkingDirectory=/opt/awesome-springboot-boilerplate
+# 环境变量文件，前缀 - 表示文件不存在时不报错；JAVA_OPTS 等可变配置在此文件中调整，无需修改 unit
+EnvironmentFile=-/etc/default/awesome-springboot-boilerplate
+# 启动命令，JAVA_OPTS 由 EnvironmentFile 注入；jar 路径为部署约定，迭代环节将 jar 放至此路径即可
+# 显式指定生产环境 profile，覆盖 application.yml 中的默认值 local；命令行参数优先级最高，确保始终加载 application-prod.yml 及其密钥导入
+ExecStart=/usr/bin/java $JAVA_OPTS -jar /opt/awesome-springboot-boilerplate/app.jar --spring.profiles.active=prod
+# 进程异常退出时自动重启（正常退出 exit 0 不重启）
+Restart=on-failure
+# 重启间隔，避免高频重启加重负载
+RestartSec=5s
+# SIGTERM 触发的退出码 143 视为正常退出，不触发 on-failure 重启
+SuccessExitStatus=143
+# 停止超时，需大于应用 spring.lifecycle.timeout-per-shutdown-phase（60s）+ 缓冲，超时后 systemd 强杀进程
+TimeoutStopSec=70s
+# 文件描述符上限，Java 应用默认 1024 在生产易耗尽
+LimitNOFILE=65536
+
+[Install]
+# 注册到 multi-user.target（运行级别 3/5），enable 后开机自启
+WantedBy=multi-user.target

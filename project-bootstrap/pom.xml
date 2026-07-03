@@ -69,8 +69,8 @@
 
     <!-- ===== 构建配置：定制可执行 Jar 输出与打包插件 ===== -->
     <build>
-        <!-- 设置构建的 jar 包名 -->
-        <finalName>awesome-springboot-boilerplate</finalName>
+        <!-- 设置构建的 jar 包名，与 systemd 服务单元 ExecStart 中的部署路径（/opt/awesome-springboot-boilerplate/app.jar）保持一致，部署时直接拷贝构建产物无需改名 -->
+        <finalName>app</finalName>
 
         <plugins>
             <!-- Spring Boot 打包插件：生成可执行 Jar，并排除 Lombok -->

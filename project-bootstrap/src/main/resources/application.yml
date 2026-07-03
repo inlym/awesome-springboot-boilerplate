@@ -64,10 +64,51 @@ spring:
         # 缓存类型，使用 Redis 作为缓存实现
         type: redis
 
+    # 数据源配置
+    datasource:
+        # 数据库连接 URL，连接 MySQL 实例的 awesome_project_database 库
+        url: jdbc:mysql://${MYSQL_HOST}:3306/awesome_project_database
+        # 数据库用户名
+        username: ${MYSQL_USERNAME}
+        # 数据库密码
+        password: ${MYSQL_PASSWORD}
+
+    # Spring Data 配置
+    data:
+        # Redis 缓存配置
+        redis:
+            # Redis 服务器地址
+            host: ${REDIS_HOST}
+            # Redis 用户名
+            username: ${REDIS_USERNAME}
+            # Redis 密码
+            password: ${REDIS_PASSWORD}
+            # Redis 数据库编号
+            database: 0
+            # Redis 服务端口
+            port: 6379
+            # 启用 Redis TLS 加密
+            ssl:
+                enabled: true
+
+    # Spring AI 配置
+    ai:
+        # OpenAI 配置
+        openai:
+            # OpenAI API 密钥
+            api-key: ${OPENAI_API_KEY}
+
 # 服务器配置
 server:
     # 优雅关闭配置
     shutdown: graceful
+
+# 日志配置
+logging:
+    # 日志级别配置
+    level:
+        # 关闭 Netty DNS 原生库加载告警，该告警无业务影响
+        io.netty.resolver.dns: OFF
 
 # Spring Boot Actuator 监控配置
 management:

@@ -1,0 +1,37 @@
+# 生产环境配置文件
+
+# Spring 框架配置
+spring:
+    # 外部配置导入
+    config:
+        # 导入服务器固定路径下的密钥配置文件，该文件不纳入版本控制
+        import: file:/etc/awesome-springboot-boilerplate/application-prod-secret.yml
+
+# 服务器配置
+server:
+    # 服务端口，生产环境使用固定端口
+    port: 35026
+
+# 日志配置
+logging:
+    # 日志级别配置
+    level:
+        # 项目根包日志级别，生产环境仅记录 INFO 及以上级别
+        com.example: INFO
+
+    # 日志文件存储目录，Linux 生产环境使用标准日志路径
+    file:
+        path: /var/log/awesome-springboot-boilerplate
+
+# Spring Boot Actuator 监控端点配置
+management:
+    # 管理服务器配置
+    server:
+        # 管理服务端口，独立于主服务端口，避免 actuator 端点暴露在主端口上
+        port: 35036
+
+    # 指标环境标签
+    metrics:
+        tags:
+            # 运行环境标识，便于在多环境场景下按环境维度聚合指标
+            env: "prod"
