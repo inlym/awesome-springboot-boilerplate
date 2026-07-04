@@ -24,7 +24,7 @@ import java.io.IOException;
  * <h2>功能特性
  * <ul>
  *   <li>直接通过 ServletRequest.getRemoteAddr() 获取客户端 IP 地址</li>
- *   <li>仅在客户端 IP 不为 null 且请求属性中为空时才赋值</li>
+ *   <li>仅在客户端 IP 不为 null 且请求属性中为空时，赋值并镜像到 MDC</li>
  *   <li>仅对包含冒号的 Host 请求头进行处理</li>
  * </ul>
  *
@@ -69,9 +69,8 @@ public class DirectAccessIpFilter extends OncePerRequestFilter implements Ordere
      *
      * <h3>处理流程
      * <p>1. 通过 getRemoteAddr() 方法获取客户端 IP 地址
-     * <p>2. 仅在客户端 IP 不为 null 且请求属性中为空时才赋值
-     * <p>3. 将客户端 IP 镜像到 MDC，供日志输出
-     * <p>4. 继续执行过滤器链，结束后清理 MDC
+     * <p>2. 仅在客户端 IP 不为 null 且请求属性中为空时，赋值并镜像到 MDC
+     * <p>3. 继续执行过滤器链，结束后清理 MDC
      *
      * @param request     HTTP 请求对象
      * @param response    HTTP 响应对象
@@ -88,15 +87,11 @@ public class DirectAccessIpFilter extends OncePerRequestFilter implements Ordere
 
         String clientIp = request.getRemoteAddr();
 
-        // 仅在客户端 IP 不为 null 且请求属性中为空时才赋值
+        // 仅在客户端 IP 不为 null 且请求属性中为空时才赋值，同时镜像到 MDC 供日志输出
         if (clientIp != null && request.getAttribute(ContextKeys.CLIENT_IP) == null) {
             request.setAttribute(ContextKeys.CLIENT_IP, clientIp);
-        }
-
-        // 将请求属性中的客户端 IP 镜像到 MDC，供日志输出
-        if (request.getAttribute(ContextKeys.CLIENT_IP) instanceof String resolvedClientIp) {
-            MDC.put(ContextKeys.CLIENT_IP, resolvedClientIp);
-            log.trace("获取客户端 IP 地址完成：{}", resolvedClientIp);
+            MDC.put(ContextKeys.CLIENT_IP, clientIp);
+            log.trace("获取客户端 IP 地址完成：{}", clientIp);
         }
 
         try {
