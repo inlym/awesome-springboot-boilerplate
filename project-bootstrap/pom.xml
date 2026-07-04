@@ -1,66 +1,72 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns="http://maven.apache.org/POM/4.0.0"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <!-- ===== 父项目配置：继承统一的依赖与插件管理 ===== -->
+    <!-- ===== 父项目配置：继承统一依赖与插件管理 ===== -->
     <parent>
         <groupId>com.example</groupId>
         <artifactId>awesome-springboot-boilerplate</artifactId>
         <version>${revision}</version>
     </parent>
 
-    <!-- ===== 模块标识信息：声明启动模块的 Maven 坐标 ===== -->
+    <!-- ===== 模块标识信息：定义当前模块的坐标和说明 ===== -->
     <artifactId>project-bootstrap</artifactId>
 
     <name>${project.artifactId}</name>
-    <description>应用启动入口模块</description>
+    <description>启动模块 - 应用启动入口，聚合所有业务模块</description>
 
-    <!-- ===== 模块依赖配置：聚合内部业务模块 ===== -->
+    <!-- ===== 模块依赖配置：聚合内部业务模块与运行时依赖 ===== -->
     <dependencies>
+        <!-- 核心共享模块 -->
         <dependency>
             <groupId>com.example</groupId>
             <artifactId>project-core</artifactId>
         </dependency>
+
+        <!-- 系统运行模块 -->
         <dependency>
             <groupId>com.example</groupId>
             <artifactId>project-system</artifactId>
         </dependency>
+
+        <!-- 账户模块 -->
         <dependency>
             <groupId>com.example</groupId>
             <artifactId>project-account</artifactId>
         </dependency>
+
+        <!-- 演示模块 -->
         <dependency>
             <groupId>com.example</groupId>
             <artifactId>project-demo</artifactId>
         </dependency>
 
-        <!-- Logstash Logback Encoder for JSON structured logging -->
+        <!-- Logstash Logback Encoder：JSON 结构化日志编码器，供 logback-spring.xml 中 LoggingEventCompositeJsonEncoder 使用 -->
         <dependency>
             <groupId>net.logstash.logback</groupId>
             <artifactId>logstash-logback-encoder</artifactId>
         </dependency>
 
-        <!-- OpenTelemetry tracing bridge，提供 OtelTracer 实现与 OTel SDK，是 tracing 的底层适配层 -->
+        <!-- OpenTelemetry Tracing Bridge：提供 OtelTracer 实现与 OTel SDK，是 tracing 的底层适配层 -->
         <dependency>
             <groupId>io.micrometer</groupId>
             <artifactId>micrometer-tracing-bridge-otel</artifactId>
         </dependency>
 
-        <!-- Spring Boot 4.x tracing autoconfig 模块，装配 Tracer bean、TracingObservationHandler 和 Slf4jScopeDecorator，使 bridge 生效并将 traceId/spanId 注入 MDC -->
+        <!-- Spring Boot Tracing Autoconfig：装配 Tracer Bean、TracingObservationHandler 和 Slf4jScopeDecorator，使 bridge 生效并将 traceId/spanId 注入 MDC -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-micrometer-tracing-opentelemetry</artifactId>
         </dependency>
 
-        <!-- OpenTelemetry OTLP exporter，通过 HTTP 协议将 span 上报到远端可观测后端 -->
+        <!-- OpenTelemetry OTLP Exporter：通过 HTTP 协议将 span 上报到远端可观测后端 -->
         <dependency>
             <groupId>io.opentelemetry</groupId>
             <artifactId>opentelemetry-exporter-otlp</artifactId>
         </dependency>
 
-        <!-- Micrometer OTLP 注册表，将 Micrometer 指标通过 OTLP HTTP 协议推送到远端可观测后端 -->
+        <!-- Micrometer OTLP Registry：将 Micrometer 指标通过 OTLP HTTP 协议推送到远端可观测后端 -->
         <dependency>
             <groupId>io.micrometer</groupId>
             <artifactId>micrometer-registry-otlp</artifactId>
