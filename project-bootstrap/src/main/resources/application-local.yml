@@ -7,13 +7,6 @@ spring:
         # 导入用户目录下的密钥配置文件，该文件不纳入版本控制
         import: file:${user.home}/.config/application-local-secret.yml
 
-    # 输出配置
-    output:
-        # ANSI 彩色输出配置
-        ansi:
-            # 始终启用彩色输出（可选值：ALWAYS、NEVER、DETECT），便于本地日志查看和调试
-            enabled: ALWAYS
-
 # 服务器配置
 server:
     # 服务端口，本地开发使用固定端口避免冲突

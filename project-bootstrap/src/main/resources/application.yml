@@ -18,6 +18,13 @@ spring:
         # 关闭 Spring Boot 启动 banner，减少控制台输出
         banner-mode: off
 
+    # 输出配置
+    output:
+        # ANSI 彩色输出配置
+        ansi:
+            # 始终启用彩色输出（可选值：ALWAYS、NEVER、DETECT），便于日志查看和调试
+            enabled: ALWAYS
+
     # 生命周期配置
     lifecycle:
         # 每个关闭阶段的超时时间（秒）
@@ -123,7 +130,7 @@ management:
     endpoint:
         health:
             # 展示组件细节的时机（可选值：never、always、when-authorized）
-            show-details: when-authorized
+            show-details: always
 
     # 健康检查组件配置
     health:
