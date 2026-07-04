@@ -18,8 +18,14 @@ Type=simple
 User=root
 # 工作目录，应用内相对路径（日志、临时文件）以此为基础
 WorkingDirectory=/opt/awesome-springboot-boilerplate
-# JVM 启动参数，固定值，调整需修改本 unit 并执行 daemon-reload
-Environment=JAVA_OPTS=-Xmx512m
+# JVM 启动参数，调整需修改本 unit 并执行 daemon-reload
+# -Xms2048m -Xmx2048m                       初始堆与最大堆等值，消除运行时堆伸缩开销
+# -XX:+AlwaysPreTouch                       启动时预触所有堆内存页，避免运行时 page fault 延迟抖动
+# -XX:+ExitOnOutOfMemoryError               OOM 时以非零退出码退出，配合 Restart=on-failure 自动重启
+# -XX:+UseStringDeduplication               G1GC 字符串去重，回收堆中重复字符串对象
+# -XX:MaxGCPauseMillis=200                  G1GC 最大停顿目标（毫秒），与默认值一致，显式声明便于运维
+# -Dfile.encoding=UTF-8                     锁定 JVM 默认文件编码，避免环境 LANG 变量差异导致乱码
+Environment=JAVA_OPTS=-Xms2048m -Xmx2048m -XX:+AlwaysPreTouch -XX:+ExitOnOutOfMemoryError -XX:+UseStringDeduplication -XX:MaxGCPauseMillis=200 -Dfile.encoding=UTF-8
 # 启动命令，JAVA_OPTS 由上方 Environment 提供；jar 路径为部署约定，迭代环节将 jar 放至此路径即可
 # 显式指定生产环境 profile，覆盖 application.yml 中的默认值 local；命令行参数优先级最高，确保始终加载 application-prod.yml 及其密钥导入
 ExecStart=/usr/bin/java $JAVA_OPTS -jar /opt/awesome-springboot-boilerplate/app.jar --spring.profiles.active=prod
