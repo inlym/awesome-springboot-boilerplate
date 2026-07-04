@@ -14,6 +14,6 @@
     <artifactId>project-core</artifactId>
 
     <name>${project.artifactId}</name>
-    <description>核心配置模块</description>
+    <description>核心模块 - 共享组件、异常处理、注解、工具类与配置</description>
 
 </project>
