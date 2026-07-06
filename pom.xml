@@ -1,13 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns="http://maven.apache.org/POM/4.0.0"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+
+    <!-- ===== Spring Boot 父项目：继承官方默认配置与依赖版本 ===== -->
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>4.1.0</version>
+        <relativePath/>
+    </parent>
 
     <!-- ===== 项目基本坐标信息：定义父项目的 Maven 唯一标识 ===== -->
     <groupId>com.example</groupId>
     <artifactId>awesome-springboot-boilerplate</artifactId>
     <version>${revision}</version>
+
+    <name>${project.artifactId}</name>
+    <description>Spring Boot 4.x 多模块项目启动模板</description>
 
     <!-- ===== 项目打包方式：父项目作为聚合器使用 pom 打包 ===== -->
     <packaging>pom</packaging>
@@ -20,17 +31,6 @@
         <module>project-demo</module>
         <module>project-bootstrap</module>
     </modules>
-
-    <name>${project.artifactId}</name>
-    <description>Spring Boot 4.x 多模块项目启动模板</description>
-
-    <!-- ===== Spring Boot 父项目：继承官方默认配置与依赖版本 ===== -->
-    <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>4.1.0</version>
-        <relativePath />
-    </parent>
 
     <!-- ===== 全局属性：集中管理版本号、编码及编译配置 ===== -->
     <properties>
