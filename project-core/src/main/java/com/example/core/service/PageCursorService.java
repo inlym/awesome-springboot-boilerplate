@@ -2,7 +2,7 @@ package com.example.core.service;
 
 import com.example.core.annotation.LogExecution;
 import com.example.core.exception.PageCursorInvalidException;
-import com.example.core.model.PageCursor;
+import com.example.core.model.page.PageCursor;
 import com.example.core.util.RandomUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

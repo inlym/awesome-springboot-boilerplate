@@ -1,4 +1,4 @@
-package com.example.core.model;
+package com.example.core.model.response;
 
 import com.mybatisflex.core.paginate.Page;
 import lombok.AllArgsConstructor;
@@ -9,10 +9,10 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 
 /**
- * 分页结果响应数据
+ * 偏移分页结果响应数据
  *
  * <h2>主要用途
- * <p>包装分页结果
+ * <p>包装偏移分页结果
  *
  * @author <a href="https://www.inlym.com">inlym</a>
  * @since 1.0.0
@@ -21,7 +21,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class PageResponse<T> {
+public class OffsetPageResponse<T> {
     /** 当前页数据 */
     private List<T> list;
 
@@ -41,10 +41,10 @@ public class PageResponse<T> {
      * 包装 MyBatis-Flex 的分页结果
      *
      * @param page 分页结果
-     * @return 分页结果响应数据
+     * @return 偏移分页结果响应数据
      */
-    public static <T> PageResponse<T> of(Page<T> page) {
-        PageResponse<T> response = new PageResponse<>();
+    public static <T> OffsetPageResponse<T> of(Page<T> page) {
+        OffsetPageResponse<T> response = new OffsetPageResponse<>();
         response.setList(page.getRecords());
         response.setCurrentPage(page.getPageNumber());
         response.setPageSize(page.getPageSize());
