@@ -7,7 +7,6 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -17,7 +16,8 @@ import java.util.List;
  * Spring MVC 配置类
  *
  * <h2>主要功能
- * <p>提供 Web 层相关配置，包括跨域资源共享（CORS）设置、自定义参数解析器和拦截器注册。
+ * <p>提供 Web 层相关配置，包括自定义参数解析器和拦截器注册。
+ * <p>跨域资源共享（CORS）已迁移至 Spring Security 层统一管理，见 {@code SpringSecurityConfig#corsConfigurationSource}。
  *
  * <h2>扩展机制说明
  * <p>通过 {@code InterceptorCustomizer} 接口支持业务模块注册自定义拦截器。
@@ -32,28 +32,6 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     /** 拦截器定制器列表 */
     private final List<InterceptorCustomizer> interceptorCustomizers;
-
-    /**
-     * 配置跨域资源共享（CORS）
-     *
-     * <h3>配置说明
-     * <p>1. 允许所有路径进行跨域访问
-     * <p>2. 允许所有来源域名
-     * <p>3. 支持 GET、POST、PUT、DELETE 等常用 HTTP 方法
-     * <p>4. 允许所有请求头
-     * <p>5. 预检请求缓存时间为 10 天（864000 秒）
-     *
-     * @param registry CORS 注册器
-     */
-    @Override
-    public void addCorsMappings(@NonNull CorsRegistry registry) {
-        registry
-            .addMapping("/**")
-            .allowedOrigins("*")
-            .allowedMethods("GET", "POST", "PUT", "DELETE")
-            .allowedHeaders("*")
-            .maxAge(864000L);
-    }
 
     /**
      * 配置自定义参数解析器
